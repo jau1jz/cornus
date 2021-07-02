@@ -1,0 +1,46 @@
+package commons
+
+//define the error code
+type ResponseCode int
+
+const (
+	// unknow error
+	HttpNotFound ResponseCode = -2
+	UnKnowError  ResponseCode = -1
+	// ok
+	OK             ResponseCode = 0
+	ParameterError ResponseCode = 1
+	ValidateError  ResponseCode = 2
+	TokenError     ResponseCode = 3
+	CheckAuthError ResponseCode = 4
+)
+
+//global code and msg
+var CodeMsg = map[ResponseCode]string{
+	OK:             "成功",
+	UnKnowError:    "未知错误",
+	HttpNotFound:   "404",
+	ParameterError: "参数错误",
+	ValidateError:  "参数验证错误",
+	TokenError:     "Token错误",
+	CheckAuthError: "检查权限错误",
+}
+
+//construct the code and msg
+func GetCodeAndMsg(code ResponseCode) string {
+	value, ok := CodeMsg[code]
+	if ok {
+		return value
+	}
+	return "{}"
+}
+
+// msg will be used as default msg, and you can change msg with function 'BuildFailedWithMsg' or 'BuildSuccessWithMsg' or 'response.WithMsg' for once.
+func RegisterCodeAndMsg(arr map[ResponseCode]string) {
+	if len(arr) == 0 {
+		return
+	}
+	for k, v := range arr {
+		CodeMsg[k] = v
+	}
+}
