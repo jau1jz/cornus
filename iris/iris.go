@@ -6,12 +6,12 @@ import (
 	"github.com/iris-contrib/swagger/v12"
 	"github.com/iris-contrib/swagger/v12/swaggerFiles"
 	"github.com/jau1jz/cornus/commons"
-	slog "github.com/jau1jz/cornus/commons/log"
 	"github.com/jau1jz/cornus/config"
 	"github.com/jau1jz/cornus/middleware"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
 	"github.com/kataras/iris/v12/middleware/pprof"
+	"os"
 )
 
 type App struct {
@@ -27,31 +27,25 @@ func (slf *App) Default() {
 		if ctx.GetStatusCode() == iris.StatusNotFound {
 			_, _ = ctx.JSON(commons.BuildFailed(commons.HttpNotFound))
 		} else {
-			_, _ = ctx.JSON(commons.BuildFailedWithMsg(commons.UnKnowError, "message"))
+			_, _ = ctx.JSON(commons.BuildFailed(commons.UnKnowError))
 		}
 	})
-	slf.initServerLog()
+	slf.app.Logger().SetLevel("debug")
+	slf.app.Logger().SetOutput(os.Stdout)
 }
 
 func (slf *App) New() {
 	slf.app = iris.New()
 	//global error handling
 	slf.app.OnAnyErrorCode(func(ctx iris.Context) {
-
 		if ctx.GetStatusCode() == iris.StatusNotFound {
 			_, _ = ctx.JSON(commons.BuildFailed(commons.HttpNotFound))
 		} else {
-			_, _ = ctx.JSON(commons.BuildFailedWithMsg(commons.UnKnowError, "message"))
+			_, _ = ctx.JSON(commons.BuildFailed(commons.UnKnowError))
 		}
 	})
-	slf.initServerLog()
-}
-
-//init server log
-func (slf *App) initServerLog() {
-	slog.Slog = slog.LogConfig{Level: config.SC.SConfigure.LogLevel, Path: config.SC.SConfigure.LogPath, FileName: config.SC.SConfigure.LogName}
-	slog.InitLogger(slog.Slog, slf.app)
-
+	slf.app.Logger().SetLevel("debug")
+	slf.app.Logger().SetOutput(os.Stdout)
 }
 
 //set middleware

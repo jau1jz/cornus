@@ -2,6 +2,7 @@ package cornus
 
 import (
 	"context"
+	"github.com/jau1jz/cornus/oss"
 	"os"
 	"os/signal"
 	"sync"
@@ -11,7 +12,6 @@ import (
 	redisv8 "github.com/go-redis/redis/v8"
 	"github.com/jau1jz/cornus/commons"
 	slog "github.com/jau1jz/cornus/commons/log"
-	"github.com/jau1jz/cornus/commons/utils"
 	"github.com/jau1jz/cornus/config"
 	"github.com/jau1jz/cornus/cornusdb"
 	"github.com/jau1jz/cornus/iris"
@@ -30,22 +30,18 @@ type Server struct {
 	redis []redis.Redis
 	db    []cornusdb.CornusDB
 	kafka kafka.Kafka
-	oss   utils.OSSClient
+	oss   oss.Client
 }
 type ServerOption int
 
 const (
 	DatabaseService = iota + 1
 	RedisService
+	Oss
 )
 
 // GetCornusInstance create the single object
 func GetCornusInstance() *Server {
-	once.Do(func() {
-		Instance = new(Server)
-		//except mysql redis
-		Instance.initService()
-	})
 	return Instance
 }
 
@@ -53,14 +49,8 @@ func (slf *Server) Default() {
 	slf.app.Default()
 }
 
-func GetOss() utils.OSSClient {
+func GetOSS() oss.Client {
 	return Instance.oss
-}
-
-func (slf *Server) initService() {
-	if config.Configs.Oss.OssBucket != "" {
-		slf.oss = utils.OSSClientInstance(config.Configs.Oss.OssBucket, config.Configs.Oss.AccessKeyID, config.Configs.Oss.AccessKeySecret, config.Configs.Oss.OssEndPoint)
-	}
 }
 
 func (slf *Server) RegisterController(f func(app *irisv12.Application)) {
@@ -166,6 +156,8 @@ func (slf *Server) StartServer(opt ...ServerOption) {
 					panic(err)
 				}
 			}
+		case Oss:
+			slf.oss = oss.ClientInstance(config.Configs.Oss.OssBucket, config.Configs.Oss.AccessKeyID, config.Configs.Oss.AccessKeySecret, config.Configs.Oss.OssEndPoint)
 		}
 	}
 }

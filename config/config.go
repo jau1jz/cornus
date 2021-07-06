@@ -2,7 +2,6 @@ package config
 
 import (
 	"fmt"
-	slog "github.com/jau1jz/cornus/commons/log"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
@@ -39,18 +38,14 @@ type OssConfig struct {
 	OssEndPoint     string `yaml:"ossEndPoint"`
 }
 
-const ()
-
-func InitAllConfig(fileName string) *Config {
+func InitAllConfig(fileName string) Config {
 	var err error
 	YamlFile, err = ioutil.ReadFile(fileName)
 	if err != nil {
-		slog.Slog.InfoF("load conf error, will exit")
-		fmt.Println(err.Error())
-		os.Exit(0)
+		panic("load config error")
 	}
-	dbc := &Config{}
-	err = yaml.Unmarshal(YamlFile, dbc)
+	dbc := Config{}
+	err = yaml.Unmarshal(YamlFile, &dbc)
 	if err != nil {
 		fmt.Println(err.Error())
 		os.Exit(0)

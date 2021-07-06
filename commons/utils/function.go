@@ -11,9 +11,8 @@ import (
 	"strings"
 )
 
-func GetUuid() string {
-	u1 := uuid.NewV4()
-	return strings.Replace(u1.String(), "-", "", -1)
+func GenerateUUID() string {
+	return strings.Replace(uuid.NewV4().String(), "-", "", -1)
 }
 
 func StringToMd5(str string) string {

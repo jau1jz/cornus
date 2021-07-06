@@ -7,9 +7,8 @@ import (
 
 func TestStart_Default_Server(t *testing.T) {
 	server := GetCornusInstance()
-	//http
 	server.app.Default()
-	server.StartServer(DatabaseService)
+	server.StartServer()
 
 	Instance.app.Get("/ping", func(context iris.Context) {
 		context.WriteString("123")

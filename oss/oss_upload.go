@@ -1,4 +1,4 @@
-package utils
+package oss
 
 import (
 	"fmt"
@@ -9,34 +9,33 @@ import (
 	"time"
 )
 
-type OSSClient interface {
+type Client interface {
 	UploadAndSignUrl(fileReader io.Reader, objectName string, expiredInSec int64) (string, error)
 	DeleteByObjectName(objectName string)
 	UploadByReader(fileReader io.Reader, fileName string) (err error)
-	DownloadFile(file_name string) (data []byte, err error)
+	DownloadFile(fileName string) (data []byte, err error)
 	IsFileExist(fileName string) (isExist bool, err error)
 	GetFileURL(fileName string, expireTime time.Duration) (url string, err error)
 }
 
-type ossClientImp struct {
+type ClientImp struct {
 	ossBucket       string
 	accessKeyID     string
 	accessKeySecret string
 	ossEndPoint     string
 }
 
-func (slf *ossClientImp) GetFileURL(fileName string, expireTime time.Duration) (url string, err error) {
+func (slf *ClientImp) GetFileURL(fileName string, expireTime time.Duration) (url string, err error) {
 	client, err := oss.New(slf.ossEndPoint, slf.accessKeyID, slf.accessKeySecret)
 	if err != nil {
-		slog.Slog.ErrorF("ossClientImp IsFileExist Error:%s", err)
+		slog.Slog.ErrorF("ClientImp IsFileExist Error:%s", err)
 		return "", err
 	}
 	bucket, err := client.Bucket(slf.ossBucket)
 	if err != nil {
-		slog.Slog.ErrorF("ossClientImp IsFileExist  Error:%s", err)
+		slog.Slog.ErrorF("ClientImp IsFileExist  Error:%s", err)
 		return "", err
 	}
-	//oss.Process("image/format,png")
 	url, err = bucket.SignURL(fileName, oss.HTTPGet, int64(expireTime))
 	if err != nil {
 		return "", err
@@ -45,8 +44,8 @@ func (slf *ossClientImp) GetFileURL(fileName string, expireTime time.Duration) (
 
 }
 
-func OSSClientInstance(ossBucket, accessKeyID, accessKeySecret, ossEndPoint string) OSSClient {
-	return &ossClientImp{
+func ClientInstance(ossBucket, accessKeyID, accessKeySecret, ossEndPoint string) Client {
+	return &ClientImp{
 		ossBucket:       ossBucket,
 		accessKeyID:     accessKeyID,
 		accessKeySecret: accessKeySecret,
@@ -54,21 +53,21 @@ func OSSClientInstance(ossBucket, accessKeyID, accessKeySecret, ossEndPoint stri
 	}
 }
 
-func (slf *ossClientImp) IsFileExist(fileName string) (isExist bool, err error) {
+func (slf *ClientImp) IsFileExist(fileName string) (isExist bool, err error) {
 	client, err := oss.New(slf.ossEndPoint, slf.accessKeyID, slf.accessKeySecret)
 	if err != nil {
-		slog.Slog.ErrorF("ossClientImp IsFileExist Error:%s", err)
+		slog.Slog.ErrorF("ClientImp IsFileExist Error:%s", err)
 		return false, err
 	}
 	bucket, err := client.Bucket(slf.ossBucket)
 	if err != nil {
-		slog.Slog.ErrorF("ossClientImp IsFileExist  Error:%s", err)
+		slog.Slog.ErrorF("ClientImp IsFileExist  Error:%s", err)
 		return false, err
 	}
 	return bucket.IsObjectExist(fileName)
 }
 
-func (slf *ossClientImp) UploadAndSignUrl(fileReader io.Reader, objectName string, expiredInSec int64) (string, error) {
+func (slf *ClientImp) UploadAndSignUrl(fileReader io.Reader, objectName string, expiredInSec int64) (string, error) {
 	// 创建OSSClient实例。
 	client, err := oss.New(slf.ossEndPoint, slf.accessKeyID, slf.accessKeySecret)
 	if err != nil {
@@ -94,7 +93,7 @@ func (slf *ossClientImp) UploadAndSignUrl(fileReader io.Reader, objectName strin
 	return signedURL, nil
 }
 
-func (slf *ossClientImp) DeleteByObjectName(objectName string) {
+func (slf *ClientImp) DeleteByObjectName(objectName string) {
 	client, err := oss.New(slf.ossEndPoint, slf.accessKeyID, slf.accessKeySecret)
 	if err != nil {
 		slog.Slog.ErrorF("Error:%s", err)
@@ -111,7 +110,7 @@ func (slf *ossClientImp) DeleteByObjectName(objectName string) {
 	}
 }
 
-func (slf *ossClientImp) UploadByReader(fileReader io.Reader, fileName string) (err error) {
+func (slf *ClientImp) UploadByReader(fileReader io.Reader, fileName string) (err error) {
 
 	client, err := oss.New(slf.ossEndPoint, slf.accessKeyID, slf.accessKeySecret)
 	if err != nil {
@@ -135,7 +134,7 @@ func (slf *ossClientImp) UploadByReader(fileReader io.Reader, fileName string) (
 	return
 }
 
-func (slf *ossClientImp) DownloadFile(file_name string) (data []byte, err error) {
+func (slf *ClientImp) DownloadFile(file_name string) (data []byte, err error) {
 
 	client, err := oss.New(slf.ossEndPoint, slf.accessKeyID, slf.accessKeySecret)
 	if err != nil {
