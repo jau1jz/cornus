@@ -5,7 +5,6 @@ import (
 	"github.com/jau1jz/cornus/oss"
 	"os"
 	"os/signal"
-	"sync"
 	"syscall"
 	"time"
 
@@ -23,8 +22,6 @@ import (
 // Instance we need create the single object but thread safe
 var Instance *Server
 
-var once sync.Once
-
 type Server struct {
 	app   iris.App
 	redis []redis.Redis
@@ -37,8 +34,12 @@ type ServerOption int
 const (
 	DatabaseService = iota + 1
 	RedisService
-	Oss
+	OssService
 )
+
+func init() {
+	Instance = &Server{}
+}
 
 // GetCornusInstance create the single object
 func GetCornusInstance() *Server {
@@ -156,7 +157,7 @@ func (slf *Server) StartServer(opt ...ServerOption) {
 					panic(err)
 				}
 			}
-		case Oss:
+		case OssService:
 			slf.oss = oss.ClientInstance(config.Configs.Oss.OssBucket, config.Configs.Oss.AccessKeyID, config.Configs.Oss.AccessKeySecret, config.Configs.Oss.OssEndPoint)
 		}
 	}
