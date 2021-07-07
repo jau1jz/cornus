@@ -8,6 +8,27 @@ import (
 	_ "path/filepath"
 )
 
+var SC ServerConfig
+var Configs Config
+var YamlFile []byte
+
+func init() {
+	yamlFile, err := ioutil.ReadFile("application.yaml")
+	if err != nil {
+		panic(fmt.Errorf("load application.yaml error, will exit,please fix the application"))
+	}
+	err = yaml.Unmarshal(yamlFile, &SC)
+	if err != nil {
+		panic(err)
+	}
+	if len(SC.SConfigure.Profile) == 0 {
+		// load dev profile application-dev.yaml
+		Configs = InitAllConfig("application-dev.yaml")
+	} else {
+		Configs = InitAllConfig(fmt.Sprintf("application-%s.yaml", SC.SConfigure.Profile))
+	}
+}
+
 type DataBaseConfig struct {
 	DBFilePath string `yaml:"db_file_path"`
 	Name       string `yaml:"name"`
@@ -59,4 +80,16 @@ func LoadCustomizeConfig(config interface{}) error {
 		return err
 	}
 	return nil
+}
+
+type ServerBaseConfig struct {
+	Addr     string `yaml:"addr"`
+	Port     int    `yaml:"port"`
+	LogLevel string `yaml:"loglevel"`
+	Profile  string `yaml:"profile"`
+	LogPath  string `yaml:"logPath"`
+	LogName  string `yaml:"logName"`
+}
+type ServerConfig struct {
+	SConfigure ServerBaseConfig `yaml:"server"`
 }
