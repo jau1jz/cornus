@@ -123,7 +123,7 @@ func (slf *ClientImp) UploadByReader(fileReader io.Reader, fileName string) (err
 		slog.Slog.ErrorF("Error:%s", err)
 		return
 	} else {
-		fmt.Println("bukect ok")
+		fmt.Println("bucket ok")
 	}
 
 	err = bucket.PutObject(fileName, fileReader)
@@ -134,7 +134,7 @@ func (slf *ClientImp) UploadByReader(fileReader io.Reader, fileName string) (err
 	return
 }
 
-func (slf *ClientImp) DownloadFile(file_name string) (data []byte, err error) {
+func (slf *ClientImp) DownloadFile(fileName string) (data []byte, err error) {
 
 	client, err := oss.New(slf.ossEndPoint, slf.accessKeyID, slf.accessKeySecret)
 	if err != nil {
@@ -147,10 +147,10 @@ func (slf *ClientImp) DownloadFile(file_name string) (data []byte, err error) {
 		slog.Slog.ErrorF("Error:%s", err)
 		return
 	} else {
-		fmt.Println("bukect ok")
+		fmt.Println("bucket ok")
 	}
 
-	body, err := bucket.GetObject(file_name)
+	body, err := bucket.GetObject(fileName)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
