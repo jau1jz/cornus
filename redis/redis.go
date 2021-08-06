@@ -32,7 +32,8 @@ func (slf *Redis) StartRedis(config config.RedisConfig) error {
 		Password: config.Password, // no password set
 		DB:       config.Db,       // use default Client
 	})
-	timeout, _ := context.WithTimeout(context.Background(), time.Second*10)
+	timeout, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	defer cancel()
 	err := slf.redisSource.Ping(timeout).Err()
 	if err != nil {
 		panic(fmt.Sprintf("redis connetc error %s", err.Error()))
