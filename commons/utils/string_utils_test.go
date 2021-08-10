@@ -12,6 +12,6 @@ func TestAppend(t *testing.T) {
 }
 
 func TestRandomSixString(t *testing.T) {
-	fmt.Println(RandomSixString(6))
+	fmt.Println(RandomString(6))
 
 }
