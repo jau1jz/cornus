@@ -52,7 +52,7 @@ func Default(ctx iris.Context) {
 	} else {
 		ctx.Request().Body = ioutil.NopCloser(bytes.NewBuffer(body))
 		if len(body) > 0 && strings.Contains(string(body), "{}") == false {
-			slog.Slog.InfoF("log http request body: %s", strings.Replace(utils.SensitiveFilter(string(body)), "\n", " ", -1))
+			slog.Slog.InfoF("log http request body: %s", string(body))
 		}
 	}
 
