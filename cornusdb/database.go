@@ -39,12 +39,10 @@ func (slf *CornusDB) StartSqlite(dbConfig serveries.DataBaseConfig) error {
 		}, Logger: logger.New(
 			&slog.Slog,
 			logger.Config{
-				SlowThreshold:             time.Second,                                         // 慢 SQL 阈值
+				SlowThreshold:             dbConfig.SlowSql * time.Millisecond,                 // 慢 SQL 阈值
 				LogLevel:                  commons.GormLogLevel[config.SC.SConfigure.LogLevel], // 日志级别
 				IgnoreRecordNotFoundError: true,                                                // 忽略ErrRecordNotFound（记录未找到）错误
-				Colorful:                  false,                                               // 禁用彩色打印
-			},
-		)})
+			})})
 	if err != nil {
 		slog.Slog.InfoF("conn database error %s", err)
 		return err

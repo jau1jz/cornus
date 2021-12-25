@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	_ "path/filepath"
+	"time"
 )
 
 var SC ServerConfig
@@ -30,9 +31,10 @@ func init() {
 }
 
 type DataBaseConfig struct {
-	DBFilePath string `yaml:"db_file_path"`
-	Name       string `yaml:"name"`
-	Type       string `yaml:"type"`
+	DBFilePath string        `yaml:"db_file_path"`
+	Name       string        `yaml:"name"`
+	Type       string        `yaml:"type"`
+	SlowSql    time.Duration `yaml:"slow_sql"`
 }
 type kafkaConfig struct {
 	Host string `yaml:"host"`

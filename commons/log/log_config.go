@@ -35,7 +35,7 @@ func init() {
 
 func getEncoder() zapcore.Encoder {
 	encoderConfig := zap.NewProductionEncoderConfig()
-	encoderConfig.EncodeTime = zapcore.RFC3339NanoTimeEncoder
+	encoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
 	encoderConfig.EncodeLevel = zapcore.CapitalLevelEncoder
 	encoderConfig.LineEnding = zapcore.DefaultLineEnding
 	return zapcore.NewConsoleEncoder(encoderConfig)
@@ -75,25 +75,23 @@ func (l *Logger) LogMode(level logger.LogLevel) logger.Interface {
 	return l
 }
 func (l *Logger) Info(ctx context.Context, template string, args ...interface{}) {
-	if l.LogLevel >= commons.Info {
-		Log.Infof(template, args...)
-	}
+	Log.Infof(template, args...)
 }
 func (l *Logger) Warn(ctx context.Context, template string, args ...interface{}) {
-	if l.LogLevel >= commons.Warn {
-		Log.Warnf(template, args...)
-	}
+	Log.Warnf(template, args...)
 }
 func (l *Logger) Error(ctx context.Context, template string, args ...interface{}) {
-	if l.LogLevel >= commons.Error {
-		Log.Warnf(template, args...)
-	}
+	Log.Warnf(template, args...)
 }
 
 func (l *Logger) Trace(ctx context.Context, begin time.Time, fc func() (sql string, rowsAffected int64), err error) {
-	if l.LogLevel <= commons.Debug {
-		sql, affected := fc()
-		elapsed := time.Since(begin)
-		Log.Infof("Sql : %s , Affected : %d , time: %d ms", sql, affected, elapsed.Milliseconds())
-	}
+	//elapsed := time.Since(begin)
+	//if l.LogLevel <= commons.Debug {
+	//	sql, rows := fc()
+	//	Log.Infof("Sql : %s , Affected : %d , time: %d ms", sql, rows, elapsed.Milliseconds())
+	//} else if elapsed > time.Second && l.LogLevel >= commons.Warn {
+	//	sql, rows := fc()
+	//	Log.Warnf("SLOW SQL : %s , Affected :%s , Excute Time: %d ms", sql, rows, elapsed.Milliseconds())
+	//}
+	panic("test")
 }
