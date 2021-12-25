@@ -5,14 +5,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/jau1jz/cornus/commons"
-	slog "github.com/jau1jz/cornus/commons/log"
+	"github.com/jau1jz/cornus/commons/log"
 	"github.com/kataras/iris/v12"
 	uuid "github.com/satori/go.uuid"
-	"strings"
 )
 
 func GenerateUUID() string {
-	return strings.Replace(uuid.NewV4().String(), "-", "", -1)
+	return uuid.NewV4().String()
 }
 
 func StringToMd5(str string) string {
@@ -33,11 +32,11 @@ func RetryFunction(c func() bool, times int) bool {
 
 func ValidateAndBindParameters(entity interface{}, ctx *iris.Context, info string) (commons.ResponseCode, string) {
 	if err := (*ctx).UnmarshalBody(entity, iris.UnmarshalerFunc(json.Unmarshal)); err != nil {
-		slog.Slog.ErrorF("%s error %s", info, err.Error())
+		log.Slog.ErrorF("%s error %s", info, err.Error())
 		return commons.ParameterError, err.Error()
 	}
 	if err := Validate(entity); err != nil {
-		slog.Slog.ErrorF("%s error %s", info, err.Error())
+		log.Slog.ErrorF("%s error %s", info, err.Error())
 		return commons.ValidateError, err.Error()
 	}
 	return commons.OK, ""

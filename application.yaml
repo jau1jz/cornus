@@ -1,8 +1,8 @@
 server:
   addr : 0.0.0.0
   port: 8080
-  #disable,silent,error,warn,info
-  loglevel: info
+  # debug info warn error
+  loglevel: warn
   profile: dev
   logPath: .\log
   logName:  iris

@@ -1,14 +1,11 @@
 package middleware
 
 import (
-	"bytes"
 	"fmt"
 	slog "github.com/jau1jz/cornus/commons/log"
 	"github.com/jau1jz/cornus/commons/utils"
 	"github.com/kataras/iris/v12"
-	"io/ioutil"
 	"runtime"
-	"strings"
 	"time"
 )
 
@@ -39,25 +36,7 @@ func Default(ctx iris.Context) {
 		}
 	}()
 	ctx.Values().Set("ctx_id", utils.GenerateUUID())
-	// read base information and write log
-	p := ctx.Request().URL.Path
-	method := ctx.Request().Method
-	start := time.Now().UnixNano() / 1e6
-	ip := ctx.Request().RemoteAddr
-	slog.Slog.InfoF("[path]--> %s [method]--> %s [IP]-->  %s", p, method, ip)
-
-	body, err := ioutil.ReadAll(ctx.Request().Body)
-	if err != nil {
-		slog.Slog.InfoF("ReadAll body failed: %s", err.Error())
-	} else {
-		ctx.Request().Body = ioutil.NopCloser(bytes.NewBuffer(body))
-		if len(body) > 0 && strings.Contains(string(body), "{}") == false {
-			slog.Slog.InfoF("log http request body: %s", string(body))
-		}
-	}
-
-	// calculate cost time
+	start := time.Now()
 	ctx.Next()
-	end := time.Now().UnixNano() / 1e6
-	slog.Slog.InfoF("[path]--> %s [cost time]ms-->  %d", p, end-start)
+	slog.Slog.InfoF("%s -> %s -> %dms", ctx.Request().RemoteAddr, ctx.Request().URL.Path, time.Now().Sub(start).Milliseconds())
 }

@@ -3,7 +3,6 @@ module github.com/jau1jz/cornus
 go 1.16
 
 require (
-	github.com/360EntSecGroup-Skylar/excelize v1.4.1
 	github.com/Shopify/sarama v1.28.0
 	github.com/ajg/form v1.5.1 // indirect
 	github.com/aliyun/aliyun-oss-go-sdk v2.1.7+incompatible
@@ -13,11 +12,8 @@ require (
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/imkira/go-interpol v1.1.0 // indirect
 	github.com/iris-contrib/swagger/v12 v12.0.1
-	github.com/jonboulle/clockwork v0.2.2 // indirect
 	github.com/kataras/iris/v12 v12.1.8
 	github.com/leodido/go-urn v1.2.1 // indirect
-	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
-	github.com/lestrrat-go/strftime v1.0.4 // indirect
 	github.com/moul/http2curl v1.0.0 // indirect
 	github.com/satori/go.uuid v1.2.0
 	github.com/sergi/go-diff v1.2.0 // indirect
@@ -30,6 +26,7 @@ require (
 	go.uber.org/zap v1.16.0
 	golang.org/x/time v0.0.0-20210220033141-f8bda1e9f3ba // indirect
 	gopkg.in/go-playground/validator.v9 v9.31.0
+	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/driver/sqlite v1.1.4
 	gorm.io/gorm v1.21.11

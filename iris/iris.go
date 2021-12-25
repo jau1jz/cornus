@@ -30,7 +30,7 @@ func (slf *App) Default() {
 			_, _ = ctx.JSON(commons.BuildFailed(commons.UnKnowError))
 		}
 	})
-	slf.app.Logger().SetLevel("debug")
+	slf.app.Logger().SetLevel(config.SC.SConfigure.LogLevel)
 	slf.app.Logger().SetOutput(os.Stdout)
 }
 
@@ -44,7 +44,7 @@ func (slf *App) New() {
 			_, _ = ctx.JSON(commons.BuildFailed(commons.UnKnowError))
 		}
 	})
-	slf.app.Logger().SetLevel("debug")
+	slf.app.Logger().SetLevel(config.SC.SConfigure.LogLevel)
 	slf.app.Logger().SetOutput(os.Stdout)
 }
 
@@ -73,7 +73,7 @@ func (slf *App) Get(relativePath string, handlers ...context.Handler) {
 	slf.app.Get(relativePath, handlers...)
 }
 
-//start server,
+//start server
 func (slf *App) Start(params ...iris.Configurator) error {
 	server := fmt.Sprintf("%s:%d", config.SC.SConfigure.Addr, config.SC.SConfigure.Port)
 	if slf.app == nil {
