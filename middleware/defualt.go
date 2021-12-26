@@ -33,7 +33,7 @@ func Default(ctx iris.Context) {
 			logMessage := fmt.Sprintf("Recovered from a route's Handler('%s')\n", ctx.HandlerName())
 			logMessage += fmt.Sprintf("Trace: %s", err)
 			logMessage += fmt.Sprintf("\n%s", stacktrace)
-			slog.Slog.ErrorF(ctx.Value("ctx").(context.Context), logMessage)
+			slog.Slog.ErrorF(value, logMessage)
 			ctx.StatusCode(500)
 			ctx.StopExecution()
 		}
