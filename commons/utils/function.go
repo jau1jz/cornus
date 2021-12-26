@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"context"
 	"crypto/md5"
 	"encoding/json"
 	"fmt"
@@ -32,11 +33,11 @@ func RetryFunction(c func() bool, times int) bool {
 
 func ValidateAndBindParameters(entity interface{}, ctx *iris.Context, info string) (commons.ResponseCode, string) {
 	if err := (*ctx).UnmarshalBody(entity, iris.UnmarshalerFunc(json.Unmarshal)); err != nil {
-		log.Slog.ErrorF("%s error %s", info, err.Error())
+		log.Slog.ErrorF((*ctx).Value("ctx").(context.Context), "%s error %s", info, err.Error())
 		return commons.ParameterError, err.Error()
 	}
 	if err := Validate(entity); err != nil {
-		log.Slog.ErrorF("%s error %s", info, err.Error())
+		log.Slog.ErrorF((*ctx).Value("ctx").(context.Context), "%s error %s", info, err.Error())
 		return commons.ValidateError, err.Error()
 	}
 	return commons.OK, ""

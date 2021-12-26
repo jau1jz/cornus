@@ -83,14 +83,13 @@ func (slf *Server) WaitClose(params ...irisv12.Configurator) {
 		)
 		select {
 		case <-ch:
-			slog.Slog.InfoF("wait for close server")
+			slog.Slog.InfoF(context.Background(), "wait for close server")
 			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 			defer cancel()
 			for _, db := range slf.db {
 				db.StopDb()
 			}
 			slf.app.GetIrisApp().Shutdown(ctx)
-			slog.Log.Sync()
 		}
 	}()
 	err := slf.app.Start(params...)

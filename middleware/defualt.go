@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"context"
 	"fmt"
 	slog "github.com/jau1jz/cornus/commons/log"
 	"github.com/jau1jz/cornus/commons/utils"
@@ -10,6 +11,8 @@ import (
 )
 
 func Default(ctx iris.Context) {
+	value := context.WithValue(context.Background(), "trace_id", utils.GenerateUUID())
+	ctx.Values().Set("ctx", value)
 	defer func() {
 		if err := recover(); err != nil {
 			if ctx.IsStopped() {
@@ -30,13 +33,13 @@ func Default(ctx iris.Context) {
 			logMessage := fmt.Sprintf("Recovered from a route's Handler('%s')\n", ctx.HandlerName())
 			logMessage += fmt.Sprintf("Trace: %s", err)
 			logMessage += fmt.Sprintf("\n%s", stacktrace)
-			slog.Slog.ErrorF(logMessage)
+			slog.Slog.ErrorF(ctx.Value("ctx").(context.Context), logMessage)
 			ctx.StatusCode(500)
 			ctx.StopExecution()
 		}
 	}()
-	ctx.Values().Set("ctx_id", utils.GenerateUUID())
+
 	start := time.Now()
 	ctx.Next()
-	slog.Slog.InfoF("%s -> %s -> %dms", ctx.Request().RemoteAddr, ctx.Request().URL.Path, time.Now().Sub(start).Milliseconds())
+	slog.Slog.InfoF(value, "%s -> %s -> %dms", ctx.Request().RemoteAddr, ctx.Request().URL.Path, time.Now().Sub(start).Milliseconds())
 }

@@ -2,7 +2,6 @@ package commons
 
 import (
 	"go.uber.org/zap/zapcore"
-	"gorm.io/gorm/logger"
 )
 
 // ResponseCode define the error code
@@ -49,17 +48,19 @@ func RegisterCodeAndMsg(arr map[ResponseCode]string) {
 }
 
 const (
-	Debug = iota - 1
+	Silent = iota - 2
+	Debug
 	Info
 	Warn
 	Error
 )
 
 var LogLevel = map[string]int{
-	"debug": -1,
-	"info":  0,
-	"warn":  1,
-	"error": 2,
+	"silent": Silent,
+	"debug":  Debug,
+	"info":   Info,
+	"warn":   Warn,
+	"error":  Error,
 }
 
 var ZapLogLevel = map[string]zapcore.Level{
@@ -67,11 +68,4 @@ var ZapLogLevel = map[string]zapcore.Level{
 	"info":  zapcore.InfoLevel,
 	"warn":  zapcore.WarnLevel,
 	"error": zapcore.ErrorLevel,
-}
-
-var GormLogLevel = map[string]logger.LogLevel{
-	"debug": logger.Info,
-	"info":  logger.Info,
-	"warn":  logger.Warn,
-	"error": logger.Error,
 }

@@ -1,7 +1,7 @@
 package oss
 
 import (
-	"fmt"
+	"context"
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	slog "github.com/jau1jz/cornus/commons/log"
 	"io"
@@ -10,12 +10,12 @@ import (
 )
 
 type Client interface {
-	UploadAndSignUrl(fileReader io.Reader, objectName string, expiredInSec int64) (string, error)
-	DeleteByObjectName(objectName string)
-	UploadByReader(fileReader io.Reader, fileName string) (err error)
-	DownloadFile(fileName string) (data []byte, err error)
-	IsFileExist(fileName string) (isExist bool, err error)
-	GetFileURL(fileName string, expireTime time.Duration) (url string, err error)
+	UploadAndSignUrl(ctx context.Context, fileReader io.Reader, objectName string, expiredInSec int64) (string, error)
+	DeleteByObjectName(ctx context.Context, objectName string)
+	UploadByReader(ctx context.Context, fileReader io.Reader, fileName string) (err error)
+	DownloadFile(ctx context.Context, fileName string) (data []byte, err error)
+	IsFileExist(ctx context.Context, fileName string) (isExist bool, err error)
+	GetFileURL(ctx context.Context, fileName string, expireTime time.Duration) (url string, err error)
 }
 
 type ClientImp struct {
@@ -25,15 +25,15 @@ type ClientImp struct {
 	ossEndPoint     string
 }
 
-func (slf *ClientImp) GetFileURL(fileName string, expireTime time.Duration) (url string, err error) {
+func (slf *ClientImp) GetFileURL(ctx context.Context, fileName string, expireTime time.Duration) (url string, err error) {
 	client, err := oss.New(slf.ossEndPoint, slf.accessKeyID, slf.accessKeySecret)
 	if err != nil {
-		slog.Slog.ErrorF("ClientImp IsFileExist Error:%s", err)
+		slog.Slog.ErrorF(ctx, "ClientImp IsFileExist Error:%s", err)
 		return "", err
 	}
 	bucket, err := client.Bucket(slf.ossBucket)
 	if err != nil {
-		slog.Slog.ErrorF("ClientImp IsFileExist  Error:%s", err)
+		slog.Slog.ErrorF(ctx, "ClientImp IsFileExist  Error:%s", err)
 		return "", err
 	}
 	url, err = bucket.SignURL(fileName, oss.HTTPGet, int64(expireTime))
@@ -53,35 +53,35 @@ func ClientInstance(ossBucket, accessKeyID, accessKeySecret, ossEndPoint string)
 	}
 }
 
-func (slf *ClientImp) IsFileExist(fileName string) (isExist bool, err error) {
+func (slf *ClientImp) IsFileExist(ctx context.Context, fileName string) (isExist bool, err error) {
 	client, err := oss.New(slf.ossEndPoint, slf.accessKeyID, slf.accessKeySecret)
 	if err != nil {
-		slog.Slog.ErrorF("ClientImp IsFileExist Error:%s", err)
+		slog.Slog.ErrorF(ctx, "ClientImp IsFileExist Error:%s", err)
 		return false, err
 	}
 	bucket, err := client.Bucket(slf.ossBucket)
 	if err != nil {
-		slog.Slog.ErrorF("ClientImp IsFileExist  Error:%s", err)
+		slog.Slog.ErrorF(ctx, "ClientImp IsFileExist  Error:%s", err)
 		return false, err
 	}
 	return bucket.IsObjectExist(fileName)
 }
 
-func (slf *ClientImp) UploadAndSignUrl(fileReader io.Reader, objectName string, expiredInSec int64) (string, error) {
+func (slf *ClientImp) UploadAndSignUrl(ctx context.Context, fileReader io.Reader, objectName string, expiredInSec int64) (string, error) {
 	// 创建OSSClient实例。
 	client, err := oss.New(slf.ossEndPoint, slf.accessKeyID, slf.accessKeySecret)
 	if err != nil {
-		slog.Slog.ErrorF("Error:%s", err)
+		slog.Slog.ErrorF(ctx, "Error:%s", err)
 		return "", err
 	}
 	bucket, err := client.Bucket(slf.ossBucket)
 	if err != nil {
-		slog.Slog.ErrorF("Error:%s", err)
+		slog.Slog.ErrorF(ctx, "Error:%s", err)
 		return "", err
 	}
 	err = bucket.PutObject(objectName, fileReader)
 	if err != nil {
-		slog.Slog.ErrorF("Error:%s", err)
+		slog.Slog.ErrorF(ctx, "Error:%s", err)
 		return "", err
 	}
 	//oss.Process("image/format,png")
@@ -93,66 +93,62 @@ func (slf *ClientImp) UploadAndSignUrl(fileReader io.Reader, objectName string, 
 	return signedURL, nil
 }
 
-func (slf *ClientImp) DeleteByObjectName(objectName string) {
+func (slf *ClientImp) DeleteByObjectName(ctx context.Context, objectName string) {
 	client, err := oss.New(slf.ossEndPoint, slf.accessKeyID, slf.accessKeySecret)
 	if err != nil {
-		slog.Slog.ErrorF("Error:%s", err)
+		slog.Slog.ErrorF(ctx, "Error:%s", err)
 		return
 	}
 	bucket, err := client.Bucket(slf.ossBucket)
 	if err != nil {
-		slog.Slog.ErrorF("Error:%s", err)
+		slog.Slog.ErrorF(ctx, "Error:%s", err)
 		return
 	}
 	err = bucket.DeleteObject(objectName)
 	if err != nil {
-		slog.Slog.ErrorF("Error:%s", err)
+		slog.Slog.ErrorF(ctx, "Error:%s", err)
 	}
 }
 
-func (slf *ClientImp) UploadByReader(fileReader io.Reader, fileName string) (err error) {
+func (slf *ClientImp) UploadByReader(ctx context.Context, fileReader io.Reader, fileName string) (err error) {
 
 	client, err := oss.New(slf.ossEndPoint, slf.accessKeyID, slf.accessKeySecret)
 	if err != nil {
-		slog.Slog.ErrorF("Error:%s", err)
+		slog.Slog.ErrorF(ctx, "Error:%s", err)
 		return
 	}
 
 	bucket, err := client.Bucket(slf.ossBucket)
 	if err != nil {
-		slog.Slog.ErrorF("Error:%s", err)
+		slog.Slog.ErrorF(ctx, "Error:%s", err)
 		return
-	} else {
-		fmt.Println("bucket ok")
 	}
 
 	err = bucket.PutObject(fileName, fileReader)
 	if err != nil {
-		fmt.Println("Error:", err)
+		slog.Slog.ErrorF(ctx, "Error:%s", err)
 		return
 	}
 	return
 }
 
-func (slf *ClientImp) DownloadFile(fileName string) (data []byte, err error) {
+func (slf *ClientImp) DownloadFile(ctx context.Context, fileName string) (data []byte, err error) {
 
 	client, err := oss.New(slf.ossEndPoint, slf.accessKeyID, slf.accessKeySecret)
 	if err != nil {
-		slog.Slog.ErrorF("Error:%s", err)
+		slog.Slog.ErrorF(ctx, "Error:%s", err)
 		return
 	}
 
 	bucket, err := client.Bucket(slf.ossBucket)
 	if err != nil {
-		slog.Slog.ErrorF("Error:%s", err)
+		slog.Slog.ErrorF(ctx, "Error:%s", err)
 		return
-	} else {
-		fmt.Println("bucket ok")
 	}
 
 	body, err := bucket.GetObject(fileName)
 	if err != nil {
-		fmt.Println("Error:", err)
+		slog.Slog.ErrorF(ctx, "Error:%s", err)
 		return
 	}
 	// 数据读取完成后，获取的流必须关闭，否则会造成连接泄漏，导致请求无连接可用，程序无法正常工作。
@@ -160,7 +156,7 @@ func (slf *ClientImp) DownloadFile(fileName string) (data []byte, err error) {
 
 	data, err = ioutil.ReadAll(body)
 	if err != nil {
-		fmt.Println("Error:", err)
+		slog.Slog.ErrorF(ctx, "Error:%s", err)
 		return
 	}
 	return
