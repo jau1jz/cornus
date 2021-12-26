@@ -28,7 +28,6 @@ func init() {
 	}
 	writeSyncer := getLogWriter(fmt.Sprintf("%s/%s.log", config.SC.SConfigure.LogPath, config.SC.SConfigure.LogName))
 	core := zapcore.NewCore(encoder, writeSyncer, commons.ZapLogLevel[config.SC.SConfigure.LogLevel])
-
 	// zap.AddCaller()  添加将调用函数信息记录到日志中的功能。
 	logger := zap.New(core, zap.AddCaller())
 	ZapLog = logger.Sugar()

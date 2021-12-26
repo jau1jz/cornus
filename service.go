@@ -68,6 +68,7 @@ func (slf *Server) RegisterErrorCodeAndMsg(arr map[commons.ResponseCode]string) 
 }
 
 func (slf *Server) WaitClose(params ...irisv12.Configurator) {
+	defer slog.ZapLog.Sync()
 	go func() {
 		ch := make(chan os.Signal, 1)
 		signal.Notify(ch,
