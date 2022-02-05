@@ -3,6 +3,7 @@ package utils
 import (
 	"context"
 	"crypto/md5"
+	"crypto/sha256"
 	"encoding/json"
 	"fmt"
 	"github.com/jau1jz/cornus/commons"
@@ -22,6 +23,9 @@ func StringToMd5(str string) string {
 	return md5str
 }
 
+func StringToSha256(str string) string {
+	return fmt.Sprintf("%x\n", sha256.Sum256([]byte("hello world\n")))
+}
 func RetryFunction(c func() bool, times int) bool {
 	for i := times + 1; i > 0; i-- {
 		if c() == true {
