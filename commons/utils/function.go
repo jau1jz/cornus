@@ -24,7 +24,7 @@ func StringToMd5(str string) string {
 }
 
 func StringToSha256(str string) string {
-	return fmt.Sprintf("%x\n", sha256.Sum256([]byte("hello world\n")))
+	return fmt.Sprintf("%x", sha256.Sum256([]byte("hello world\n")))
 }
 func RetryFunction(c func() bool, times int) bool {
 	for i := times + 1; i > 0; i-- {

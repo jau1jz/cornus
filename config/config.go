@@ -31,10 +31,25 @@ func init() {
 }
 
 type DataBaseConfig struct {
-	DBFilePath string        `yaml:"db_file_path"`
-	Name       string        `yaml:"name"`
-	Type       string        `yaml:"type"`
-	SlowSql    time.Duration `yaml:"slow_sql"`
+	//common
+	Name    string        `yaml:"name"`
+	Type    string        `yaml:"type"`
+	SlowSql time.Duration `yaml:"slow_sql"`
+
+	//sqlite
+	DBFilePath string `yaml:"db_file_path"`
+
+	//mysql
+	Addr        string        `yaml:"addr"`
+	Port        string        `yaml:"port"`
+	Username    string        `yaml:"username"`
+	DbName      string        `yaml:"db_name"`
+	Password    string        `yaml:"password"`
+	IdleConn    int           `yaml:"idle_conn"`
+	MaxConn     int           `yaml:"max_conn"`
+	MaxIdleTime time.Duration `yaml:"max_idle_time"`
+	MaxLifeTime time.Duration `yaml:"max_life_time"`
+	Charset     string        `yaml:"charset"`
 }
 type kafkaConfig struct {
 	Host string `yaml:"host"`

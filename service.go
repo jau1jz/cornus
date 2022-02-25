@@ -144,6 +144,13 @@ func (slf *Server) StartServer(opt ...ServerOption) {
 						panic(err)
 					}
 					slf.db = append(slf.db, db)
+				} else if v.Type == "mysql" {
+					db := cornusdb.CornusDB{}
+					err = db.StartMysql(v)
+					if err != nil {
+						panic(err)
+					}
+					slf.db = append(slf.db, db)
 				} else {
 					continue
 				}
