@@ -19,13 +19,13 @@ const (
 
 // CodeMsg global code and msg
 var CodeMsg = map[ResponseCode]string{
-	OK:             "成功",
-	UnKnowError:    "未知错误",
+	OK:             "suc",
+	UnKnowError:    "unknown error",
 	HttpNotFound:   "404",
-	ParameterError: "参数错误",
-	ValidateError:  "参数验证错误",
-	TokenError:     "Token错误",
-	CheckAuthError: "检查权限错误",
+	ParameterError: "parameter error",
+	ValidateError:  "validate error",
+	TokenError:     "Token error",
+	CheckAuthError: "check auth error",
 }
 
 // GetCodeAndMsg construct the code and msg

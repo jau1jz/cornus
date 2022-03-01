@@ -32,6 +32,9 @@ func BuildSuccessWithMsg(msg string, data interface{}) *BaseResponse {
 }
 
 func BuildFailed(code ResponseCode) *BaseResponse {
+	if code == 0 {
+		code = UnKnowError
+	}
 	return &BaseResponse{
 		Code: code,
 		Msg:  GetCodeAndMsg(code),
