@@ -48,7 +48,6 @@ func (slf *CornusDB) StartMysql(dbConfig serveries.DataBaseConfig) error {
 	}
 	slf.name = dbConfig.Name
 	var err error
-	//"user:pass@tcp(127.0.0.1:3306)/dbname?charset=utf8mb4&parseTime=True&loc=Local"
 	Dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s&parseTime=True&loc=Local",
 		dbConfig.Username,
 		dbConfig.Password,

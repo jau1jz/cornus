@@ -22,47 +22,32 @@ func BuildResponse(code ResponseCode, msg string, data interface{}) *BaseRespons
 	return &BaseResponse{code, msg, data, time.Now().UnixNano() / 1e6}
 }
 
-func BuildSuccess(data interface{}) *BaseResponse {
+func BuildSuccess(data interface{}, language string) *BaseResponse {
 
-	return &BaseResponse{Code: OK, Msg: GetCodeAndMsg(OK), Data: data, Time: time.Now().UnixNano() / 1e6}
+	return &BaseResponse{Code: OK, Msg: GetCodeAndMsg(OK, language), Data: data, Time: time.Now().UnixNano() / 1e6}
 }
 func BuildSuccessWithMsg(msg string, data interface{}) *BaseResponse {
 
 	return &BaseResponse{Code: OK, Msg: msg, Data: data, Time: time.Now().UnixNano() / 1e6}
 }
 
-func BuildFailed(code ResponseCode) *BaseResponse {
+func BuildFailed(code ResponseCode, language string) *BaseResponse {
 	if code == 0 {
 		code = UnKnowError
 	}
 	return &BaseResponse{
 		Code: code,
-		Msg:  GetCodeAndMsg(code),
+		Msg:  GetCodeAndMsg(code, language),
 		Data: struct{}{},
 		Time: time.Now().UnixNano() / 1e6,
 	}
 }
 func BuildFailedWithMsg(code ResponseCode, msg string) *BaseResponse {
 	message := msg
-	if len(msg) == 0 {
-		message = GetCodeAndMsg(code)
-	}
 	return &BaseResponse{
 		Code: code,
 		Msg:  message,
 		Data: struct{}{},
-		Time: time.Now().UnixNano() / 1e6,
-	}
-}
-func BuildFailedWithCode(code ResponseCode, data interface{}) *BaseResponse {
-	msg := GetCodeAndMsg(code)
-	if data == nil {
-		data = struct{}{}
-	}
-	return &BaseResponse{
-		Code: code,
-		Msg:  msg,
-		Data: data,
 		Time: time.Now().UnixNano() / 1e6,
 	}
 }

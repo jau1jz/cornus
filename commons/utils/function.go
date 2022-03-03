@@ -44,5 +44,6 @@ func ValidateAndBindParameters(entity interface{}, ctx iris.Context, info string
 		log.Slog.ErrorF(ctx.Values().Get("ctx").(context.Context), "%s error %s", info, err.Error())
 		return commons.ValidateError, err.Error()
 	}
+
 	return commons.OK, ""
 }

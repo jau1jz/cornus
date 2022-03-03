@@ -18,32 +18,38 @@ const (
 )
 
 // CodeMsg global code and msg
-var CodeMsg = map[ResponseCode]string{
-	OK:             "suc",
-	UnKnowError:    "unknown error",
-	HttpNotFound:   "404",
-	ParameterError: "parameter error",
-	ValidateError:  "validate error",
-	TokenError:     "Token error",
-	CheckAuthError: "check auth error",
+var CodeMsg = map[string]map[ResponseCode]string{
+	"english": {
+		OK:             "suc",
+		UnKnowError:    "unknown error",
+		HttpNotFound:   "404",
+		ParameterError: "parameter error",
+		ValidateError:  "validate error",
+		TokenError:     "Token error",
+		CheckAuthError: "check auth error",
+	},
 }
 
 // GetCodeAndMsg construct the code and msg
-func GetCodeAndMsg(code ResponseCode) string {
-	value, ok := CodeMsg[code]
-	if ok {
-		return value
+func GetCodeAndMsg(code ResponseCode, language string) string {
+	if languageValue, ok := CodeMsg[language]; ok {
+		if value, ok := languageValue[code]; ok {
+			return value
+		} else {
+			return "{}"
+		}
+	} else {
+		return "{}"
 	}
-	return "{}"
 }
 
 // RegisterCodeAndMsg msg will be used as default msg, and you can change msg with function 'BuildFailedWithMsg' or 'BuildSuccessWithMsg' or 'response.WithMsg' for once.
-func RegisterCodeAndMsg(arr map[ResponseCode]string) {
+func RegisterCodeAndMsg(language string, arr map[ResponseCode]string) {
 	if len(arr) == 0 {
 		return
 	}
 	for k, v := range arr {
-		CodeMsg[k] = v
+		CodeMsg[language][k] = v
 	}
 }
 
@@ -69,3 +75,10 @@ var ZapLogLevel = map[string]zapcore.Level{
 	"warn":  zapcore.WarnLevel,
 	"error": zapcore.ErrorLevel,
 }
+
+var DefualtLanguage = MsgLanguageEnglish
+
+// msg language
+const (
+	MsgLanguageEnglish = "english"
+)

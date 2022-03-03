@@ -58,12 +58,12 @@ func (slf *Server) RegisterController(f func(app *irisv12.Application)) {
 	f(slf.app.GetIrisApp())
 }
 
-func (slf *Server) RegisterErrorCodeAndMsg(arr map[commons.ResponseCode]string) {
+func (slf *Server) RegisterErrorCodeAndMsg(language string, arr map[commons.ResponseCode]string) {
 	if len(arr) == 0 {
 		return
 	}
 	for k, v := range arr {
-		commons.CodeMsg[k] = v
+		commons.CodeMsg[language][k] = v
 	}
 }
 
