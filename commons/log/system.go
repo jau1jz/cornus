@@ -15,6 +15,7 @@ import (
 var Slog Logger
 var Gorm GormLogger
 var ZapLog *zap.SugaredLogger
+var GormLog *zap.SugaredLogger
 
 type Logger struct {
 }
@@ -29,8 +30,8 @@ func init() {
 	writeSyncer := getLogWriter(fmt.Sprintf("%s/%s.log", config.SC.SConfigure.LogPath, config.SC.SConfigure.LogName))
 	core := zapcore.NewCore(encoder, writeSyncer, commons.ZapLogLevel[config.SC.SConfigure.LogLevel])
 	// zap.AddCaller()  添加将调用函数信息记录到日志中的功能。
-	logger := zap.New(core, zap.AddCaller())
-	ZapLog = logger.Sugar()
+	ZapLog = zap.New(core, zap.AddCaller(), zap.AddCallerSkip(1)).Sugar()
+	GormLog = zap.New(core, zap.AddCaller(), zap.AddCallerSkip(5)).Sugar()
 }
 
 func getEncoder() zapcore.Encoder {
