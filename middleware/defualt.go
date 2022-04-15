@@ -41,5 +41,5 @@ func Default(ctx iris.Context) {
 
 	start := time.Now()
 	ctx.Next()
-	slog.Slog.InfoF(value, "%s -> %s -> %dms", ctx.Request().RemoteAddr, ctx.Request().URL.Path, time.Now().Sub(start).Milliseconds())
+	slog.Slog.InfoF(value, "%s -> %s %s -> %dms", ctx.Request().RemoteAddr, ctx.Request().Method, ctx.Request().URL.Path, time.Now().Sub(start).Milliseconds())
 }
