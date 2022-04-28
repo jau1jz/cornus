@@ -47,3 +47,17 @@ func ValidateAndBindParameters(entity interface{}, ctx iris.Context, info string
 
 	return commons.OK, ""
 }
+
+func ValidateAndBindCtxParameters(entity interface{}, ctx iris.Context, info string) (commons.ResponseCode, string) {
+	err := json.Unmarshal(ctx.Values().Get(commons.CtxValueParameter).([]byte), entity)
+	if err != nil {
+		log.Slog.ErrorF(ctx.Values().Get("ctx").(context.Context), "%s error %s", info, err.Error())
+		return commons.ParameterError, err.Error()
+	}
+	if err := Validate(entity); err != nil {
+		log.Slog.ErrorF(ctx.Values().Get("ctx").(context.Context), "%s error %s", info, err.Error())
+		return commons.ValidateError, err.Error()
+	}
+
+	return commons.OK, ""
+}

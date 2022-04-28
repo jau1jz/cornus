@@ -17,6 +17,10 @@ const (
 	CheckAuthError ResponseCode = 4
 )
 
+const (
+	CtxValueParameter = "parameter"
+)
+
 // CodeMsg global code and msg
 var CodeMsg = map[string]map[ResponseCode]string{
 	"english": {
