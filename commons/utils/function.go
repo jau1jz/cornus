@@ -10,10 +10,11 @@ import (
 	"github.com/jau1jz/cornus/commons/log"
 	"github.com/kataras/iris/v12"
 	uuid "github.com/satori/go.uuid"
+	"strings"
 )
 
 func GenerateUUID() string {
-	return uuid.NewV4().String()
+	return strings.Replace(uuid.NewV4().String(), "-", "", -1)
 }
 
 func StringToMd5(str string) string {

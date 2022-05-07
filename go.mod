@@ -1,6 +1,6 @@
 module github.com/jau1jz/cornus
 
-go 1.16
+go 1.18
 
 require (
 	github.com/Shopify/sarama v1.28.0
