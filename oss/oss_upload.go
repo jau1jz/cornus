@@ -5,7 +5,6 @@ import (
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	slog "github.com/jau1jz/cornus/commons/log"
 	"io"
-	"io/ioutil"
 	"time"
 )
 
@@ -87,7 +86,7 @@ func (slf *ClientImp) UploadAndSignUrl(ctx context.Context, fileReader io.Reader
 	//oss.Process("image/format,png")
 	signedURL, err := bucket.SignURL(objectName, oss.HTTPGet, expiredInSec)
 	if err != nil {
-		bucket.DeleteObject(objectName)
+		_ = bucket.DeleteObject(objectName)
 		return "", err
 	}
 	return signedURL, nil
@@ -152,9 +151,11 @@ func (slf *ClientImp) DownloadFile(ctx context.Context, fileName string) (data [
 		return
 	}
 	// 数据读取完成后，获取的流必须关闭，否则会造成连接泄漏，导致请求无连接可用，程序无法正常工作。
-	defer body.Close()
+	defer func(body io.ReadCloser) {
+		_ = body.Close()
+	}(body)
 
-	data, err = ioutil.ReadAll(body)
+	data, err = io.ReadAll(body)
 	if err != nil {
 		slog.Slog.ErrorF(ctx, "Error:%s", err)
 		return

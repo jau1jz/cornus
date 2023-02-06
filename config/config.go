@@ -3,7 +3,6 @@ package config
 import (
 	"fmt"
 	"gopkg.in/yaml.v2"
-	"io/ioutil"
 	"os"
 	_ "path/filepath"
 	"time"
@@ -14,7 +13,7 @@ var Configs Config
 var YamlFile []byte
 
 func init() {
-	yamlFile, err := ioutil.ReadFile("application.yaml")
+	yamlFile, err := os.ReadFile("application.yaml")
 	if err != nil {
 		panic(fmt.Errorf("load application.yaml error, will exit,please fix the application"))
 	}
@@ -79,7 +78,7 @@ type OssConfig struct {
 
 func InitAllConfig(fileName string) Config {
 	var err error
-	YamlFile, err = ioutil.ReadFile(fileName)
+	YamlFile, err = os.ReadFile(fileName)
 	if err != nil {
 		panic("load config error")
 	}

@@ -25,9 +25,9 @@ func (slf *App) Default() {
 	//global error handling
 	slf.app.OnAnyErrorCode(func(ctx iris.Context) {
 		if ctx.GetStatusCode() == iris.StatusNotFound {
-			_, _ = ctx.JSON(commons.BuildFailed(commons.HttpNotFound, commons.DefualtLanguage))
+			_ = ctx.JSON(commons.BuildFailed(commons.HttpNotFound, commons.DefualtLanguage))
 		} else {
-			_, _ = ctx.JSON(commons.BuildFailed(commons.UnKnowError, commons.DefualtLanguage))
+			_ = ctx.JSON(commons.BuildFailed(commons.UnKnowError, commons.DefualtLanguage))
 		}
 	})
 	slf.app.Logger().SetLevel(config.SC.SConfigure.LogLevel)
@@ -39,26 +39,26 @@ func (slf *App) New() {
 	//global error handling
 	slf.app.OnAnyErrorCode(func(ctx iris.Context) {
 		if ctx.GetStatusCode() == iris.StatusNotFound {
-			_, _ = ctx.JSON(commons.BuildFailed(commons.HttpNotFound, commons.DefualtLanguage))
+			_ = ctx.JSON(commons.BuildFailed(commons.HttpNotFound, commons.DefualtLanguage))
 		} else {
-			_, _ = ctx.JSON(commons.BuildFailed(commons.UnKnowError, commons.DefualtLanguage))
+			_ = ctx.JSON(commons.BuildFailed(commons.UnKnowError, commons.DefualtLanguage))
 		}
 	})
 	slf.app.Logger().SetLevel(config.SC.SConfigure.LogLevel)
 	slf.app.Logger().SetOutput(os.Stdout)
 }
 
-//set middleware
+// SetGlobalMiddleware set global middleware
 func (slf *App) SetGlobalMiddleware(handlers ...context.Handler) {
 	slf.app.UseGlobal(handlers...)
 }
 
-//set middleware
+// SetMiddleware set middleware
 func (slf *App) SetMiddleware(handlers ...context.Handler) {
 	slf.app.Use(handlers...)
 }
 
-//get Iris App
+// GetIrisApp get Iris App
 func (slf *App) GetIrisApp() *iris.Application {
 	return slf.app
 }
@@ -73,11 +73,11 @@ func (slf *App) Get(relativePath string, handlers ...context.Handler) {
 	slf.app.Get(relativePath, handlers...)
 }
 
-//start server
+// Start cornus server
 func (slf *App) Start(params ...iris.Configurator) error {
 	server := fmt.Sprintf("%s:%d", config.SC.SConfigure.Addr, config.SC.SConfigure.Port)
 	if slf.app == nil {
-		return errors.New("Server not init")
+		return errors.New("server not init")
 	}
 	//go slf.app.Run(iris.Addr(server))
 	swaggerConfig := &swagger.Config{

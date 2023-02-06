@@ -3,12 +3,13 @@ package cornus
 import (
 	"context"
 	"github.com/jau1jz/cornus/oss"
+	"go.uber.org/zap"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
-	redisv8 "github.com/go-redis/redis/v8"
+	redisV8 "github.com/go-redis/redis/v8"
 	"github.com/jau1jz/cornus/commons"
 	slog "github.com/jau1jz/cornus/commons/log"
 	"github.com/jau1jz/cornus/config"
@@ -16,7 +17,7 @@ import (
 	"github.com/jau1jz/cornus/iris"
 	"github.com/jau1jz/cornus/kafka"
 	"github.com/jau1jz/cornus/redis"
-	irisv12 "github.com/kataras/iris/v12"
+	irisV12 "github.com/kataras/iris/v12"
 )
 
 // Instance we need create the single object but thread safe
@@ -54,7 +55,7 @@ func GetOSS() oss.Client {
 	return Instance.oss
 }
 
-func (slf *Server) RegisterController(f func(app *irisv12.Application)) {
+func (slf *Server) RegisterController(f func(app *irisV12.Application)) {
 	f(slf.app.GetIrisApp())
 }
 
@@ -67,18 +68,20 @@ func (slf *Server) RegisterErrorCodeAndMsg(language string, arr map[commons.Resp
 	}
 }
 
-func (slf *Server) WaitClose(params ...irisv12.Configurator) {
-	defer slog.ZapLog.Sync()
+func (slf *Server) WaitClose(params ...irisV12.Configurator) {
+	defer func(ZapLog *zap.SugaredLogger) {
+		_ = ZapLog.Sync()
+	}(slog.ZapLog)
 	go func() {
 		ch := make(chan os.Signal, 1)
 		signal.Notify(ch,
-			// kill -SIGINT XXXX 或 Ctrl+c
+			// kill -SIGINT XXL 或 Ctrl+c
 			os.Interrupt,
 			syscall.SIGINT, // register that too, it should be ok
 			// os.Kill等同于syscall.Kill
 			os.Kill,
 			syscall.SIGKILL, // register that too, it should be ok
-			// kill -SIGTERM XXXXD
+			// kill -SIGTERM XXE
 			//^
 			syscall.SIGTERM,
 		)
@@ -88,9 +91,9 @@ func (slf *Server) WaitClose(params ...irisv12.Configurator) {
 			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 			defer cancel()
 			for _, db := range slf.db {
-				db.StopDb()
+				_ = db.StopDb()
 			}
-			slf.app.GetIrisApp().Shutdown(ctx)
+			_ = slf.app.GetIrisApp().Shutdown(ctx)
 		}
 	}()
 	err := slf.app.Start(params...)
@@ -114,7 +117,7 @@ func (slf *Server) FeatureDB(name string) *cornusdb.CornusDB {
 	}
 	return nil
 }
-func (slf *Server) Redis(name string) *redisv8.Client {
+func (slf *Server) Redis(name string) *redisV8.Client {
 	for _, v := range slf.redis {
 		if v.Name() == name {
 			return v.Redis()
