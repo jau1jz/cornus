@@ -1,10 +1,12 @@
 package config
 
 import (
+	"bytes"
 	"fmt"
 	"gopkg.in/yaml.v2"
 	"os"
 	_ "path/filepath"
+	"strings"
 	"time"
 )
 
@@ -23,9 +25,9 @@ func init() {
 	}
 	if len(SC.SConfigure.Profile) == 0 {
 		// load dev profile application-dev.yaml
-		Configs = InitAllConfig("application-dev.yaml")
+		Configs = InitAllConfig(strings.TrimRight(SC.SConfigure.ConfigPath, "\\") + "\\" + "dev")
 	} else {
-		Configs = InitAllConfig(fmt.Sprintf("application-%s.yaml", SC.SConfigure.Profile))
+		Configs = InitAllConfig(strings.TrimRight(SC.SConfigure.ConfigPath, "\\") + "\\" + SC.SConfigure.Profile)
 	}
 }
 
@@ -77,13 +79,25 @@ type OssConfig struct {
 }
 
 func InitAllConfig(fileName string) Config {
-	var err error
-	YamlFile, err = os.ReadFile(fileName)
+	dir, err := os.ReadDir(fileName)
 	if err != nil {
 		panic("load config error")
 	}
+	var buffer bytes.Buffer
+	for _, v := range dir {
+		if v.IsDir() == false {
+			if strings.Contains(v.Name(), ".yaml") {
+				file, err := os.ReadFile(fileName + "\\" + v.Name())
+				if err != nil {
+					panic("load config error")
+				}
+				buffer.Write(file)
+				break
+			}
+		}
+	}
 	dbc := Config{}
-	err = yaml.Unmarshal(YamlFile, &dbc)
+	err = yaml.Unmarshal(buffer.Bytes(), &dbc)
 	if err != nil {
 		fmt.Println(err.Error())
 		os.Exit(0)
@@ -100,12 +114,13 @@ func LoadCustomizeConfig(config interface{}) error {
 }
 
 type ServerBaseConfig struct {
-	Addr     string `yaml:"addr"`
-	Port     int    `yaml:"port"`
-	LogLevel string `yaml:"loglevel"`
-	Profile  string `yaml:"profile"`
-	LogPath  string `yaml:"logPath"`
-	LogName  string `yaml:"logName"`
+	Addr       string `yaml:"addr"`
+	Port       int    `yaml:"port"`
+	LogLevel   string `yaml:"loglevel"`
+	Profile    string `yaml:"profile"`
+	LogPath    string `yaml:"logPath"`
+	ConfigPath string `yaml:"configPath"`
+	LogName    string `yaml:"logName"`
 }
 type ServerConfig struct {
 	SConfigure ServerBaseConfig `yaml:"server"`
