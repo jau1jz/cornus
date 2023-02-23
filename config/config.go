@@ -88,7 +88,7 @@ func InitAllConfig(fileName string) Config {
 	for _, v := range dir {
 		if v.IsDir() == false {
 			if strings.Contains(v.Name(), ".yaml") {
-				file, err := os.ReadFile(fileName + "\\" + v.Name())
+				file, err := os.ReadFile(fileName + "/" + v.Name())
 				if err != nil {
 					panic("load config error")
 				}
