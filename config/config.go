@@ -98,6 +98,7 @@ func InitAllConfig(fileName string) Config {
 		}
 	}
 	dbc := Config{}
+	YamlFile = buffer.Bytes()
 	err = yaml.Unmarshal(buffer.Bytes(), &dbc)
 	if err != nil {
 		fmt.Println(err.Error())
