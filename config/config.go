@@ -93,6 +93,7 @@ func InitAllConfig(fileName string) Config {
 					panic("load config error")
 				}
 				buffer.Write(file)
+				buffer.Write([]byte("\n"))
 				continue
 			}
 		}
