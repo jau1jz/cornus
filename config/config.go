@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"gopkg.in/yaml.v2"
+	"log"
 	"os"
 	_ "path/filepath"
 	"strings"
@@ -81,7 +82,7 @@ type OssConfig struct {
 func InitAllConfig(fileName string) Config {
 	dir, err := os.ReadDir(fileName)
 	if err != nil {
-		panic("load config error")
+		log.Panicf("load config error %s %s", err, fileName)
 	}
 	var buffer bytes.Buffer
 	for _, v := range dir {
