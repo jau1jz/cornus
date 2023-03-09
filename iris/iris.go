@@ -25,9 +25,9 @@ func (slf *App) Default() {
 	//global error handling
 	slf.app.OnAnyErrorCode(func(ctx iris.Context) {
 		if ctx.GetStatusCode() == iris.StatusNotFound {
-			_ = ctx.JSON(commons.BuildFailed(commons.HttpNotFound, commons.DefualtLanguage))
+			_ = ctx.JSON(commons.BuildFailed(commons.HttpNotFound, commons.DefaultLanguage))
 		} else {
-			_ = ctx.JSON(commons.BuildFailed(commons.UnKnowError, commons.DefualtLanguage))
+			_ = ctx.JSON(commons.BuildFailed(commons.UnKnowError, commons.DefaultLanguage))
 		}
 	})
 	slf.app.Logger().SetLevel(config.SC.SConfigure.LogLevel)
@@ -39,9 +39,9 @@ func (slf *App) New() {
 	//global error handling
 	slf.app.OnAnyErrorCode(func(ctx iris.Context) {
 		if ctx.GetStatusCode() == iris.StatusNotFound {
-			_ = ctx.JSON(commons.BuildFailed(commons.HttpNotFound, commons.DefualtLanguage))
+			_ = ctx.JSON(commons.BuildFailed(commons.HttpNotFound, commons.DefaultLanguage))
 		} else {
-			_ = ctx.JSON(commons.BuildFailed(commons.UnKnowError, commons.DefualtLanguage))
+			_ = ctx.JSON(commons.BuildFailed(commons.UnKnowError, commons.DefaultLanguage))
 		}
 	})
 	slf.app.Logger().SetLevel(config.SC.SConfigure.LogLevel)
