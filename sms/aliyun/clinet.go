@@ -14,10 +14,10 @@ type Client struct {
 
 func (c *Client) Send(input SendMessagesInput) error {
 	sendSmsRequest := &dysmsapi20170525.SendSmsRequest{
-		PhoneNumbers:  tea.String("18683031655"),
-		SignName:      tea.String("天才助理"),
-		TemplateCode:  tea.String("SMS_262305037"),
-		TemplateParam: tea.String(`{"code":"123456"}`),
+		PhoneNumbers:  tea.String(input.PhoneNumbers),
+		SignName:      tea.String(input.SignName),
+		TemplateCode:  tea.String(input.TemplateName),
+		TemplateParam: tea.String(input.TemplateParam),
 	}
 	runtime := &aliutil.RuntimeOptions{}
 	// 复制代码运行请自行打印 API 的返回值
