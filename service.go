@@ -60,12 +60,7 @@ func (slf *Server) RegisterController(f func(app *irisV12.Application)) {
 }
 
 func (slf *Server) RegisterErrorCodeAndMsg(language string, arr map[commons.ResponseCode]string) {
-	if len(arr) == 0 {
-		return
-	}
-	for k, v := range arr {
-		commons.CodeMsg[language][k] = v
-	}
+	commons.RegisterCodeAndMsg(language, arr)
 }
 
 func (slf *Server) WaitClose(params ...irisV12.Configurator) {
