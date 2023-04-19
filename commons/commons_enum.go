@@ -52,6 +52,7 @@ func RegisterCodeAndMsg(language string, arr map[ResponseCode]string) {
 	if len(arr) == 0 {
 		return
 	}
+	CodeMsg[language] = make(map[ResponseCode]string)
 	for k, v := range arr {
 		CodeMsg[language][k] = v
 	}
