@@ -41,7 +41,7 @@ func (l *GormLogger) Trace(ctx context.Context, begin time.Time, fc func() (sql 
 	}
 	elapsed := time.Since(begin)
 	switch {
-	case err != nil && l.LogLevel <= commons.Error && (errors.Is(err, gorm.ErrRecordNotFound) && !l.IgnoreRecordNotFoundError):
+	case ((err != nil && errors.Is(err, gorm.ErrRecordNotFound) == false) || (err != nil && errors.Is(err, gorm.ErrRecordNotFound) && l.IgnoreRecordNotFoundError == false)) && l.LogLevel <= commons.Error:
 		sql, _ := fc()
 		l.Error(ctx, "sql: %s time: %.3f error : %s", sql, float64(elapsed.Nanoseconds())/1e6, err.Error())
 	case l.LogLevel <= commons.Info:
