@@ -6,15 +6,16 @@ import (
 	"crypto/sha256"
 	"encoding/json"
 	"fmt"
+	"github.com/google/uuid"
 	"github.com/jau1jz/cornus/commons"
 	"github.com/jau1jz/cornus/commons/log"
 	"github.com/kataras/iris/v12"
-	uuid "github.com/satori/go.uuid"
 	"strings"
 )
 
 func GenerateUUID() string {
-	return strings.Replace(uuid.NewV4().String(), "-", "", -1)
+	newUUID, _ := uuid.NewUUID()
+	return strings.Replace(newUUID.String(), "-", "", -1)
 }
 
 func StringToMd5(str string) string {
