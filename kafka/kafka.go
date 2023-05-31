@@ -4,14 +4,12 @@ import (
 	"context"
 	"github.com/Shopify/sarama"
 	"github.com/jau1jz/cornus/config"
+	"log"
 	"strconv"
 	"sync"
 )
 
-type Kafka struct {
-}
-
-func (slf *Kafka) KafkaReceiver(ctx context.Context, topic string, callBackChan chan []byte) {
+func Receiver(ctx context.Context, topic string, callBackChan chan []byte) {
 
 	go func() {
 		wg := sync.WaitGroup{}
@@ -55,4 +53,37 @@ func (slf *Kafka) KafkaReceiver(ctx context.Context, topic string, callBackChan 
 		wg.Wait()
 		consumer.Close().Error()
 	}()
+}
+
+func GroupReceiver(ctx context.Context, brokers []string, group string, topics []string, handler sarama.ConsumerGroupHandler) {
+
+	wg := sync.WaitGroup{}
+	wg.Add(1)
+	configK := sarama.NewConfig()
+	configK.Consumer.Group.Rebalance.GroupStrategies = []sarama.BalanceStrategy{sarama.BalanceStrategyRange}
+	configK.Consumer.Offsets.Initial = sarama.OffsetOldest
+	consumer, err := sarama.NewConsumerGroup(brokers, group, configK)
+	if err != nil {
+		log.Fatalln("Error creating consumer group client:", err)
+		return
+	}
+	defer func() {
+		if err := consumer.Close(); err != nil {
+			log.Fatalln("Error closing consumer group client:", err)
+		}
+	}()
+	go func() {
+		defer wg.Done()
+		for {
+			if err := consumer.Consume(ctx, topics, handler); err != nil {
+				log.Fatalln("Error from consumer:", err)
+			}
+
+			if ctx.Done() != nil {
+				return
+			}
+		}
+	}()
+
+	wg.Wait()
 }

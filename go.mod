@@ -10,9 +10,9 @@ require (
 	github.com/alibabacloud-go/tea-utils/v2 v2.0.1
 	github.com/aliyun/aliyun-oss-go-sdk v2.1.7+incompatible
 	github.com/go-redis/redis/v8 v8.11.5
+	github.com/google/uuid v1.3.0
 	github.com/iris-contrib/swagger/v12 v12.0.1
 	github.com/kataras/iris/v12 v12.2.0
-	github.com/satori/go.uuid v1.2.0
 	github.com/valyala/fasthttp v1.37.0
 	go.uber.org/zap v1.16.0
 	gopkg.in/go-playground/validator.v9 v9.31.0
@@ -60,7 +60,6 @@ require (
 	github.com/go-playground/universal-translator v0.17.0 // indirect
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
-	github.com/google/uuid v1.3.0 // indirect
 	github.com/gorilla/css v1.0.0 // indirect
 	github.com/hashicorp/errwrap v1.0.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
