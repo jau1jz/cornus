@@ -15,7 +15,6 @@ import (
 	"github.com/jau1jz/cornus/config"
 	"github.com/jau1jz/cornus/cornusdb"
 	"github.com/jau1jz/cornus/iris"
-	"github.com/jau1jz/cornus/kafka"
 	"github.com/jau1jz/cornus/redis"
 	irisV12 "github.com/kataras/iris/v12"
 )
@@ -27,7 +26,6 @@ type Server struct {
 	app   iris.App
 	redis []redis.Redis
 	db    []cornusdb.CornusDB
-	kafka kafka.Kafka
 	oss   oss.Client
 }
 type ServerOption int
@@ -166,8 +164,4 @@ func (slf *Server) StartServer(opt ...ServerOption) {
 			slf.oss = oss.ClientInstance(config.Configs.Oss.OssBucket, config.Configs.Oss.AccessKeyID, config.Configs.Oss.AccessKeySecret, config.Configs.Oss.OssEndPoint)
 		}
 	}
-}
-
-func (slf *Server) KafkaService(ctx context.Context, topic string, callBackChan chan []byte) {
-	slf.kafka.KafkaReceiver(ctx, topic, callBackChan)
 }
