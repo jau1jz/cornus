@@ -3,8 +3,8 @@ package kafka
 import (
 	"context"
 	"github.com/Shopify/sarama"
+	slog "github.com/jau1jz/cornus/commons/log"
 	"github.com/jau1jz/cornus/config"
-	"log"
 	"strconv"
 	"sync"
 )
@@ -55,7 +55,7 @@ func Receiver(ctx context.Context, topic string, callBackChan chan []byte) {
 	}()
 }
 
-func GroupReceiver(ctx context.Context, brokers []string, group string, topics []string, handler sarama.ConsumerGroupHandler) {
+func GroupReceiver(ctx context.Context, brokers []string, group string, topics []string, handler sarama.ConsumerGroupHandler) error {
 
 	wg := sync.WaitGroup{}
 	wg.Add(1)
@@ -64,19 +64,19 @@ func GroupReceiver(ctx context.Context, brokers []string, group string, topics [
 	configK.Consumer.Offsets.Initial = sarama.OffsetOldest
 	consumer, err := sarama.NewConsumerGroup(brokers, group, configK)
 	if err != nil {
-		log.Fatalln("Error creating consumer group client:", err)
-		return
+		slog.Slog.InfoF(ctx, "Error creating consumer group client:", err)
+		return err
 	}
 	defer func() {
 		if err := consumer.Close(); err != nil {
-			log.Fatalln("Error closing consumer group client:", err)
+			slog.Slog.InfoF(ctx, "Error creating consumer group client:", err)
 		}
 	}()
 	go func() {
 		defer wg.Done()
 		for {
 			if err := consumer.Consume(ctx, topics, handler); err != nil {
-				log.Fatalln("Error from consumer:", err)
+				slog.Slog.InfoF(ctx, "Error creating consumer group client:", err)
 			}
 
 			if ctx.Done() != nil {
@@ -86,4 +86,5 @@ func GroupReceiver(ctx context.Context, brokers []string, group string, topics [
 	}()
 
 	wg.Wait()
+	return nil
 }
