@@ -62,14 +62,16 @@ func GroupReceiver(ctx context.Context, brokers []string, group string, topics [
 	configK := sarama.NewConfig()
 	configK.Consumer.Group.Rebalance.GroupStrategies = []sarama.BalanceStrategy{sarama.BalanceStrategyRange}
 	configK.Consumer.Offsets.Initial = sarama.OffsetOldest
+	slog.Slog.InfoF(ctx, "Error creating consumer group client connecting brokers %+v", brokers)
 	consumer, err := sarama.NewConsumerGroup(brokers, group, configK)
 	if err != nil {
 		slog.Slog.InfoF(ctx, "Error creating consumer group client:", err)
 		return err
 	}
+	slog.Slog.InfoF(ctx, "Error creating consumer group client connected")
 	defer func() {
 		if err := consumer.Close(); err != nil {
-			slog.Slog.InfoF(ctx, "Error creating consumer group client:", err)
+			slog.Slog.InfoF(ctx, "Error creatqing consumer group client:", err)
 		}
 	}()
 	go func() {
