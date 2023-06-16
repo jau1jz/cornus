@@ -65,20 +65,20 @@ func GroupReceiver(ctx context.Context, brokers []string, group string, topics [
 	slog.Slog.InfoF(ctx, "Error creating consumer group client connecting brokers %+v", brokers)
 	consumer, err := sarama.NewConsumerGroup(brokers, group, configK)
 	if err != nil {
-		slog.Slog.InfoF(ctx, "Error creating consumer group client:", err)
+		slog.Slog.InfoF(ctx, "Error creating consumer group client: %+v", err)
 		return err
 	}
 	slog.Slog.InfoF(ctx, "Error creating consumer group client connected")
 	defer func() {
 		if err := consumer.Close(); err != nil {
-			slog.Slog.InfoF(ctx, "Error creatqing consumer group client:", err)
+			slog.Slog.InfoF(ctx, "Error creating consumer group client: %+v", err)
 		}
 	}()
 	go func() {
 		defer wg.Done()
 		for {
 			if err := consumer.Consume(ctx, topics, handler); err != nil {
-				slog.Slog.InfoF(ctx, "Error creating consumer group client:", err)
+				slog.Slog.InfoF(ctx, "Error creating consumer group client: %+v", err)
 			}
 
 			if ctx.Done() != nil {
