@@ -2,7 +2,7 @@ package kafka
 
 import (
 	"context"
-	"github.com/Shopify/sarama"
+	"github.com/IBM/sarama"
 	slog "github.com/jau1jz/cornus/commons/log"
 	"github.com/jau1jz/cornus/config"
 	"strconv"

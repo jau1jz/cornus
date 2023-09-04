@@ -3,7 +3,7 @@ package utils
 import (
 	"context"
 	"fmt"
-	"github.com/Shopify/sarama"
+	"github.com/IBM/sarama"
 	slog "github.com/jau1jz/cornus/commons/log"
 )
 
@@ -21,7 +21,12 @@ func KafkaSend(topic string, key string, data []byte, host string, port uint) er
 		slog.Slog.ErrorF(context.Background(), "kafka connection err["+err.Error()+"]")
 		return err
 	}
-	defer client.Close()
+	defer func(client sarama.SyncProducer) {
+		err := client.Close()
+		if err != nil {
+			slog.Slog.ErrorF(context.Background(), "kafka close err["+err.Error()+"]")
+		}
+	}(client)
 	if _, _, err := client.SendMessage(msg); err != nil {
 		slog.Slog.ErrorF(context.Background(), "kafka send failed["+err.Error()+"]")
 		return err

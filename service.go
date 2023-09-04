@@ -147,6 +147,13 @@ func (slf *Server) StartServer(opt ...ServerOption) {
 						panic(err)
 					}
 					slf.db = append(slf.db, db)
+				} else if v.Type == "pgsql" {
+					db := cornusdb.CornusDB{}
+					err = db.StartPgsql(v)
+					if err != nil {
+						panic(err)
+					}
+					slf.db = append(slf.db, db)
 				} else {
 					continue
 				}
