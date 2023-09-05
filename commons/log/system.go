@@ -37,7 +37,7 @@ func init() {
 func getEncoder() zapcore.Encoder {
 	encoderConfig := zap.NewProductionEncoderConfig()
 	encoderConfig.EncodeTime = zapcore.TimeEncoderOfLayout("2006-01-02 15:04:05")
-	encoderConfig.EncodeLevel = zapcore.CapitalLevelEncoder
+	encoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
 	encoderConfig.LineEnding = zapcore.DefaultLineEnding
 	return zapcore.NewConsoleEncoder(encoderConfig)
 }
