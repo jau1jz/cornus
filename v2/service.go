@@ -123,7 +123,8 @@ func (slf *Server) http() {
 	} else {
 		gin.SetMode(gin.DebugMode)
 	}
-	slf.app = gin.New()
+	gin.ForceConsoleColor()
+	slf.app = gin.Default()
 	//插入中间件
 	slf.app.Use(middleware.Default)
 

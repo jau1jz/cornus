@@ -1,10 +1,12 @@
+//go:build !debug_log
+
 package log
 
 import (
 	"context"
 	"fmt"
-	"github.com/jau1jz/cornus/commons"
-	"github.com/jau1jz/cornus/config"
+	"github.com/jau1jz/cornus/v2/commons"
+	"github.com/jau1jz/cornus/v2/config"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
@@ -70,6 +72,10 @@ func (l *Logger) DebugF(ctx context.Context, template string, args ...interface{
 
 func (l *Logger) ErrorF(ctx context.Context, template string, args ...interface{}) {
 	ZapLog.Errorf(getTraceId(ctx)+template, args...)
+}
+
+func (l *Logger) warnF(ctx context.Context, template string, args ...interface{}) {
+	ZapLog.Warnf(getTraceId(ctx)+template, args...)
 }
 
 func (l *Logger) Printf(format string, v ...interface{}) {
