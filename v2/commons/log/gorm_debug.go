@@ -1,3 +1,5 @@
+//go:build debug_log
+
 package log
 
 import (
