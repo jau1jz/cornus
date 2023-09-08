@@ -14,6 +14,7 @@ import (
 	"math/rand"
 	"os"
 	"runtime"
+	"strings"
 	"sync"
 )
 
@@ -146,7 +147,15 @@ func (l *Logger) PrintAll(ctx context.Context) {
 		logStacks := value.([]logStack)
 		traceID := color(getTraceId(logStacks[0].Ctx)) + " "
 		for _, logStack := range logStacks {
-			logStack.F(context.Background(), fmt.Sprintf("%s %s %s", logStack.Caller, traceID, logStack.Template), logStack.Args...)
+			path := logStack.Caller
+			idx := strings.LastIndexByte(logStack.Caller, '/')
+			if idx != -1 {
+				idx = strings.LastIndexByte(logStack.Caller[:idx], '/')
+				if idx != -1 {
+					path = logStack.Caller[idx+1:]
+				}
+			}
+			logStack.F(context.Background(), fmt.Sprintf("%s %s %s", path, traceID, logStack.Template), logStack.Args...)
 		}
 	}
 }
