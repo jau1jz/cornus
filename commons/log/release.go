@@ -5,8 +5,8 @@ package log
 import (
 	"context"
 	"fmt"
-	"github.com/jau1jz/cornus/v2/commons"
-	"github.com/jau1jz/cornus/v2/config"
+	"github.com/jau1jz/cornus/commons"
+	"github.com/jau1jz/cornus/config"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"

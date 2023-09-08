@@ -34,20 +34,6 @@ func (slf *App) Default() {
 	slf.app.Logger().SetOutput(os.Stdout)
 }
 
-func (slf *App) New() {
-	slf.app = iris.New()
-	//global error handling
-	slf.app.OnAnyErrorCode(func(ctx iris.Context) {
-		if ctx.GetStatusCode() == iris.StatusNotFound {
-			_ = ctx.JSON(commons.BuildFailed(commons.HttpNotFound, commons.DefaultLanguage))
-		} else {
-			_ = ctx.JSON(commons.BuildFailed(commons.UnKnowError, commons.DefaultLanguage))
-		}
-	})
-	slf.app.Logger().SetLevel(config.SC.SConfigure.LogLevel)
-	slf.app.Logger().SetOutput(os.Stdout)
-}
-
 // SetGlobalMiddleware set global middleware
 func (slf *App) SetGlobalMiddleware(handlers ...context.Handler) {
 	slf.app.UseGlobal(handlers...)
