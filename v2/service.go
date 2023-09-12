@@ -173,7 +173,6 @@ func (slf *Server) StartServer(opt ...ServerOption) {
 				} else {
 					continue
 				}
-
 			}
 		case RedisService:
 			slf.redis = make([]redis.Redis, len(config.Configs.Redis))
