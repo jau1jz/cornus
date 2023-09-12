@@ -3,11 +3,13 @@
 package middleware
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	slog "github.com/jau1jz/cornus/v2/commons/log"
 	"github.com/jau1jz/cornus/v2/commons/utils"
+	"io"
 	"net/http"
 	"runtime"
 	"time"
@@ -34,11 +36,20 @@ func Default(ctx *gin.Context) {
 			ctx.AbortWithStatus(http.StatusUnauthorized)
 		}
 	}()
+	if ctx.Request.Method == http.MethodPost {
+		all, err := io.ReadAll(ctx.Request.Body)
+		if err != nil {
+			slog.Slog.ErrorF(value, "ReadAll %s", err)
+		} else {
+			slog.Slog.InfoF(value, "Body \n%s", string(all))
+			ctx.Request.Body = io.NopCloser(bytes.NewBuffer(all))
+		}
+	}
 	start := time.Now()
 	ctx.Next()
-	addr := ctx.Request.RemoteAddr
-	if ctx.GetHeader("X-Forwarded-For") != "" {
-		addr = ctx.GetHeader("X-Forwarded-For")
+	path := ctx.Request.URL.Path
+	if ctx.Request.URL.RawQuery != "" {
+		path += "?" + ctx.Request.URL.RawQuery
 	}
-	slog.Slog.InfoF(value, "%s -> %s %s -> %dms", addr, ctx.Request.Method, ctx.Request.URL.Path, time.Now().Sub(start).Milliseconds())
+	slog.Slog.InfoF(value, "%d %s -> %dms  %s -> %s", ctx.Writer.Status(), ctx.ClientIP(), time.Now().Sub(start).Milliseconds(), ctx.Request.Method, path)
 }

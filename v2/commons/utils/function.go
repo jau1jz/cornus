@@ -36,13 +36,6 @@ func RetryFunction(c func() bool, times int) bool {
 	}
 	return false
 }
-func TraceId(ctx context.Context) string {
-	if traceId, ok := ctx.Value("trace_id").(string); ok {
-		return fmt.Sprintf("trace_id: %s", traceId)
-	} else {
-		return ""
-	}
-}
 func ValidateAndBindCtxParameters(entity interface{}, ctx *gin.Context, info string) (commons.ResponseCode, string) {
 	err := ctx.MustBindWith(entity, binding.JSON)
 	if err != nil {
