@@ -36,7 +36,13 @@ func RetryFunction(c func() bool, times int) bool {
 	}
 	return false
 }
-
+func TraceId(ctx context.Context) string {
+	if traceId, ok := ctx.Value("trace_id").(string); ok {
+		return fmt.Sprintf("trace_id: %s", traceId)
+	} else {
+		return ""
+	}
+}
 func ValidateAndBindParameters(entity interface{}, ctx iris.Context, info string) (commons.ResponseCode, string) {
 	if err := ctx.UnmarshalBody(entity, iris.UnmarshalerFunc(json.Unmarshal)); err != nil {
 		log.Slog.ErrorF(ctx.Values().Get("ctx").(context.Context), "%s error %s", info, err.Error())

@@ -6,6 +6,7 @@ import (
 	"crypto/sha256"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 	"github.com/google/uuid"
 	"github.com/jau1jz/cornus/v2/commons"
 	"github.com/jau1jz/cornus/v2/commons/log"
@@ -35,9 +36,15 @@ func RetryFunction(c func() bool, times int) bool {
 	}
 	return false
 }
-
+func TraceId(ctx context.Context) string {
+	if traceId, ok := ctx.Value("trace_id").(string); ok {
+		return fmt.Sprintf("trace_id: %s", traceId)
+	} else {
+		return ""
+	}
+}
 func ValidateAndBindCtxParameters(entity interface{}, ctx *gin.Context, info string) (commons.ResponseCode, string) {
-	err := ctx.ShouldBindJSON(entity)
+	err := ctx.MustBindWith(entity, binding.JSON)
 	if err != nil {
 		log.Slog.ErrorF(ctx.Value("ctx").(context.Context), "%s error %s", info, err.Error())
 		return commons.ParameterError, err.Error()
