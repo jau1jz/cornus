@@ -51,7 +51,7 @@ func Default(ctx *gin.Context) {
 	if ctx.Request.URL.RawQuery != "" {
 		path += "?" + ctx.Request.URL.RawQuery
 	}
-	slog.Slog.InfoF(value, "%d %s -> %dms  %s -> %s", ctx.Writer.Status(), ctx.ClientIP(), time.Now().Sub(start).Milliseconds(), ctx.Request.Method, path)
+	slog.Slog.InfoF(value, "[%d] %s -> %dms  %s -> %s ", ctx.Writer.Status(), ctx.ClientIP(), time.Now().Sub(start).Milliseconds(), ctx.Request.Method, path)
 
 	slog.Slog.PrintAll(value)
 }

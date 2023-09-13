@@ -10,6 +10,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jau1jz/cornus/v2/commons"
 	"github.com/jau1jz/cornus/v2/commons/log"
+	"net/http"
 	"strings"
 )
 
@@ -37,14 +38,16 @@ func RetryFunction(c func() bool, times int) bool {
 	return false
 }
 func ValidateAndBindCtxParameters(entity interface{}, ctx *gin.Context, info string) (commons.ResponseCode, string) {
-	err := ctx.MustBindWith(entity, binding.JSON)
-	if err != nil {
-		log.Slog.ErrorF(ctx.Value("ctx").(context.Context), "%s error %s", info, err.Error())
-		return commons.ParameterError, err.Error()
-	}
-	if err := Validate(entity); err != nil {
-		log.Slog.ErrorF(ctx.Value("ctx").(context.Context), "%s error %s", info, err.Error())
-		return commons.ValidateError, err.Error()
+	if ctx.Request.Method == http.MethodPost {
+		err := ctx.MustBindWith(entity, binding.JSON)
+		if err != nil {
+			log.Slog.ErrorF(ctx.Value("ctx").(context.Context), "%s error %s", info, err.Error())
+			return commons.ParameterError, err.Error()
+		}
+		if err := Validate(entity); err != nil {
+			log.Slog.ErrorF(ctx.Value("ctx").(context.Context), "%s error %s", info, err.Error())
+			return commons.ValidateError, err.Error()
+		}
 	}
 
 	return commons.OK, ""

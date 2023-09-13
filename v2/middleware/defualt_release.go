@@ -40,7 +40,7 @@ func Default(ctx *gin.Context) {
 		all, err := io.ReadAll(ctx.Request.Body)
 		if err != nil {
 			slog.Slog.ErrorF(value, "ReadAll %s", err)
-		} else {
+		} else if len(all) > 0 {
 			slog.Slog.InfoF(value, "Body \n%s", string(all))
 			ctx.Request.Body = io.NopCloser(bytes.NewBuffer(all))
 		}
@@ -51,5 +51,5 @@ func Default(ctx *gin.Context) {
 	if ctx.Request.URL.RawQuery != "" {
 		path += "?" + ctx.Request.URL.RawQuery
 	}
-	slog.Slog.InfoF(value, "%d %s -> %dms  %s -> %s", ctx.Writer.Status(), ctx.ClientIP(), time.Now().Sub(start).Milliseconds(), ctx.Request.Method, path)
+	slog.Slog.InfoF(value, "[response code:%d] [%s] [%dms] [%s:%s]", ctx.Writer.Status(), ctx.ClientIP(), time.Now().Sub(start).Milliseconds(), ctx.Request.Method, path)
 }
