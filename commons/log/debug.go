@@ -89,7 +89,6 @@ func pressLog(f func(ctx context.Context, template string, args ...interface{}),
 		Template: template,
 		Args:     args,
 	}
-
 	id := getTraceId(ctx)
 	if id == "" {
 		f(ctx, template, args...)

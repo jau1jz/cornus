@@ -89,13 +89,17 @@ func pressLog(f func(ctx context.Context, template string, args ...interface{}),
 		Template: template,
 		Args:     args,
 	}
-
-	if actual, loaded := logMap.LoadOrStore(getTraceId(ctx), []logStack{
-		newLog,
-	}); loaded {
-		logStacks := actual.([]logStack)
-		logStacks = append(logStacks, newLog)
-		logMap.Store(getTraceId(ctx), logStacks)
+	id := getTraceId(ctx)
+	if id == "" {
+		f(ctx, template, args...)
+	} else {
+		if actual, loaded := logMap.LoadOrStore(id, []logStack{
+			newLog,
+		}); loaded {
+			logStacks := actual.([]logStack)
+			logStacks = append(logStacks, newLog)
+			logMap.Store(id, logStacks)
+		}
 	}
 }
 func pressGormLog(f func(ctx context.Context, template string, args ...interface{}), ctx context.Context, template string, args ...interface{}) {
@@ -108,13 +112,17 @@ func pressGormLog(f func(ctx context.Context, template string, args ...interface
 		Template: template,
 		Args:     args,
 	}
-
-	if actual, loaded := logMap.LoadOrStore(getTraceId(ctx), []logStack{
-		newLog,
-	}); loaded {
-		logStacks := actual.([]logStack)
-		logStacks = append(logStacks, newLog)
-		logMap.Store(getTraceId(ctx), logStacks)
+	id := getTraceId(ctx)
+	if id == "" {
+		f(ctx, template, args...)
+	} else {
+		if actual, loaded := logMap.LoadOrStore(id, []logStack{
+			newLog,
+		}); loaded {
+			logStacks := actual.([]logStack)
+			logStacks = append(logStacks, newLog)
+			logMap.Store(id, logStacks)
+		}
 	}
 }
 func (l *Logger) InfoF(ctx context.Context, template string, args ...interface{}) {
