@@ -3,13 +3,16 @@
 package middleware
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	slog "github.com/jau1jz/cornus/v2/commons/log"
 	"github.com/jau1jz/cornus/v2/commons/utils"
+	"io"
 	"net/http"
 	"runtime"
+	"time"
 )
 
 func Default(ctx *gin.Context) {
