@@ -125,6 +125,7 @@ func pressGormLog(f func(ctx context.Context, template string, args ...interface
 		}
 	}
 }
+
 func (l *Logger) InfoF(ctx context.Context, template string, args ...interface{}) {
 	pressLog(l.infoF, ctx, template, args...)
 }
