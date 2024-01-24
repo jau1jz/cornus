@@ -22,7 +22,7 @@ var Slog Logger
 var Gorm GormLogger
 var ZapLog *zap.SugaredLogger
 var GormLog *zap.SugaredLogger
-
+var GormSkip int
 var logMap sync.Map
 
 type Logger struct {
@@ -50,6 +50,9 @@ func init() {
 	GormLog = zap.New(core).Sugar()
 }
 
+func ReInit() {
+
+}
 func getEncoder() zapcore.Encoder {
 	encoderConfig := zap.NewProductionEncoderConfig()
 	encoderConfig.EncodeTime = zapcore.TimeEncoderOfLayout("2006-01-02 15:04:05")

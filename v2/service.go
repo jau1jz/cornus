@@ -48,6 +48,10 @@ func init() {
 func GetCornusInstance() *Server {
 	return Instance
 }
+func (slf *Server) SetMysqlLogCallerSkip(skip int) {
+	slog.GormSkip = skip
+	slog.ReInit()
+}
 func (slf *Server) RegisterErrorCodeAndMsg(language string, arr map[commons.ResponseCode]string) {
 	commons.RegisterCodeAndMsg(language, arr)
 }
