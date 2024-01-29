@@ -16,7 +16,9 @@ import (
 )
 
 func Default(ctx *gin.Context) {
-	value := context.WithValue(context.Background(), "trace_id", utils.GenerateUUID())
+	uuid := utils.GenerateUUID()
+	value := context.WithValue(ctx, "trace_id", uuid)
+	ctx.Set("trace_id", uuid)
 	ctx.Set("ctx", value)
 	defer func() {
 		if err := recover(); err != nil {
@@ -32,7 +34,7 @@ func Default(ctx *gin.Context) {
 			logMessage := fmt.Sprintf("Recovered from a route's Handler('%s')\n", ctx.HandlerName())
 			logMessage += fmt.Sprintf("Trace: %s", err)
 			logMessage += fmt.Sprintf("\n%s", stacktrace)
-			slog.Slog.ErrorF(value, logMessage)
+			slog.Slog.ErrorF(ctx, logMessage)
 			ctx.AbortWithStatus(http.StatusUnauthorized)
 		}
 	}()
@@ -40,9 +42,9 @@ func Default(ctx *gin.Context) {
 		if ctx.Request.Method == http.MethodPost {
 			all, err := io.ReadAll(ctx.Request.Body)
 			if err != nil {
-				slog.Slog.ErrorF(value, "ReadAll %s", err)
+				slog.Slog.ErrorF(ctx, "ReadAll %s", err)
 			} else if len(all) > 0 {
-				slog.Slog.InfoF(value, "Body \n%s", string(all))
+				slog.Slog.InfoF(ctx, "Body \n%s", string(all))
 				ctx.Request.Body = io.NopCloser(bytes.NewBuffer(all))
 			}
 		}
@@ -52,6 +54,6 @@ func Default(ctx *gin.Context) {
 		if ctx.Request.URL.RawQuery != "" {
 			path += "?" + ctx.Request.URL.RawQuery
 		}
-		slog.Slog.InfoF(value, "[response code:%d] [%s] [%dms] [%s:%s]", ctx.Writer.Status(), ctx.ClientIP(), time.Now().Sub(start).Milliseconds(), ctx.Request.Method, path)
+		slog.Slog.InfoF(ctx, "[response code:%d] [%s] [%dms] [%s:%s]", ctx.Writer.Status(), ctx.ClientIP(), time.Now().Sub(start).Milliseconds(), ctx.Request.Method, path)
 	}
 }
