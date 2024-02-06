@@ -52,7 +52,11 @@ func Default(ctx *gin.Context) {
 		if ctx.Request.URL.RawQuery != "" {
 			path += "?" + ctx.Request.URL.RawQuery
 		}
-		slog.Slog.InfoF(value, "[response code:%d] [%s] [%dms] [%s:%s]", ctx.Writer.Status(), ctx.ClientIP(), time.Now().Sub(start).Milliseconds(), ctx.Request.Method, path)
+		ip := ctx.ClientIP()
+		if ctx.Request.Header.Get("X-Forwarded-For") != "" {
+			ip = ctx.Request.Header.Get("X-Forwarded-For")
+		}
+		slog.Slog.InfoF(value, "[response code:%d] [%s] [%dms] [%s:%s]", ctx.Writer.Status(), ip, time.Now().Sub(start).Milliseconds(), ctx.Request.Method, path)
 	}
 
 	slog.Slog.PrintAll(value)
