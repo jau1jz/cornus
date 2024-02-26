@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"sync/atomic"
 	"syscall"
 	"time"
 
@@ -85,6 +86,13 @@ func (slf *Server) WaitClose() {
 		for _, db := range slf.db {
 			_ = db.StopDb()
 		}
+		for {
+			if atomic.LoadInt64(&commons.ActiveRequests) == 0 {
+				break
+			}
+			time.Sleep(time.Second)
+		}
+
 		err := server.Shutdown(ctx)
 		if err != nil {
 			slog.Slog.ErrorF(context.Background(), err.Error())

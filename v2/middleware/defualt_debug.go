@@ -7,17 +7,21 @@ import (
 	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/jau1jz/cornus/v2/commons"
 	slog "github.com/jau1jz/cornus/v2/commons/log"
 	"github.com/jau1jz/cornus/v2/commons/utils"
 	"io"
 	"net/http"
 	"runtime"
+	"sync/atomic"
 	"time"
 )
 
 func Default(ctx *gin.Context) {
 	value := context.WithValue(context.Background(), "trace_id", utils.GenerateUUID())
 	ctx.Set("ctx", value)
+	atomic.AddInt64(&commons.ActiveRequests, 1)
+	defer atomic.AddInt64(&commons.ActiveRequests, -1)
 	defer func() {
 		if err := recover(); err != nil {
 			var stacktrace string
