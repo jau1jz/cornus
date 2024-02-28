@@ -24,6 +24,12 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
+
+	for _, v := range os.Args {
+		if strings.Contains(v, "-env") {
+			SC.SConfigure.Profile = strings.Split(v, "=")[1]
+		}
+	}
 	if len(SC.SConfigure.Profile) == 0 {
 		// load dev profile application-dev.yaml
 		Configs = InitAllConfig(strings.TrimRight(SC.SConfigure.ConfigPath, "/") + "/" + "dev")
